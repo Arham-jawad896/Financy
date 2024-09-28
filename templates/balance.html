@@ -1,0 +1,10 @@
+{% extends 'dashboard.html' %}
+
+{% block page_content %}
+<div class="container">
+    <h2>Your Balance</h2>
+    <p>Total Income: <strong>${{ current_balance + total_expenses }}</strong></p>
+    <p>Total Expenses: <strong>${{ total_expenses }}</strong></p>
+    <h3>Current Balance: <strong>${{ current_balance }}</strong></h3>
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'dashboard.html' %}
+
+{% block page_content %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">User Overview</h1>
+
+    <div class="row">
+        <!-- Personal Information Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-light animate__animated animate__fadeIn">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Personal Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Full Name:</strong> {{ user_info[2] }}</p>
+                    <p><strong>Email:</strong> {{ user_info[3] }}</p>
+                    <p><strong>Phone:</strong> {{ user_info[4] }}</p>
+                    <p><strong>Address:</strong> {{ user_info[5] }}, {{ user_info[6] }}, {{ user_info[7] }}</p>
+                    <p><strong>Job Title:</strong> {{ user_info[9] }}</p> <!-- Corrected index for job_title -->
+                    <p><strong>Employer:</strong> {{ user_info[10] }}</p> <!-- Corrected index for employer -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Information Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-light animate__animated animate__fadeIn">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Financial Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Income:</strong> ${{ user_info[11] }}</p> <!-- Corrected index for income -->
+                    <p><strong>Expenses:</strong> ${{ user_info[12] }}</p> <!-- Corrected index for expenses -->
+                    <p><strong>Dependents:</strong> {{ user_info[13] }}</p> <!-- Corrected index for dependents -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Goals & Preferences Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-light animate__animated animate__fadeIn">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Goals & Preferences</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Savings Goals:</strong> {{ user_info[14] }}</p> <!-- Corrected index for savings_goals -->
+                    <p><strong>Financial Goals:</strong> {{ user_info[15] }}</p> <!-- Corrected index for financial_goals -->
+                    <p><strong>Investment Preferences:</strong> {{ user_info[16] }}</p> <!-- Corrected index for investment_preferences -->
+                    <p><strong>Notes:</strong> {{ user_info[17] }}</p> <!-- Corrected index for notes -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Investments Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-light animate__animated animate__fadeIn">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">Investments</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Investments:</strong> ${{ user_info[18] }}</p> <!-- Corrected index for investments -->
+                    <p><strong>Emergency Fund:</strong> ${{ user_info[19] }}</p> <!-- Corrected index for emergency_fund -->
+                    <p><strong>Vacation:</strong> ${{ user_info[20] }}</p> <!-- Corrected index for vacation -->
+                    <p><strong>Rent:</strong> ${{ user_info[25] }}</p> <!-- Corrected index for rent -->
+                    <p><strong>Utilities:</strong> ${{ user_info[22] }}</p> <!-- Corrected index for utilities -->
+                    <p><strong>Groceries:</strong> ${{ user_info[23] }}</p> <!-- Corrected index for groceries -->
+                    <p><strong>Transport:</strong> ${{ user_info[24] }}</p> <!-- Corrected index for transport -->
+                    <p><strong>Entertainment:</strong> ${{ user_info[25] }}</p> <!-- Corrected index for entertainment -->
+                    <p><strong>Stocks:</strong> ${{ user_info[26] }}</p> <!-- Corrected index for stocks -->
+                    <p><strong>Bonds:</strong> ${{ user_info[27] }}</p> <!-- Corrected index for bonds -->
+                    <p><strong>Real Estate:</strong> ${{ user_info[28] }}</p> <!-- Corrected index for real_estate -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Button -->
+    <div class="text-center mt-3">
+    <a href="{{ url_for('edit_information') }}" class="btn btn-secondary">Edit Information</a>
+</div>
+
+</div>
+
+<!-- Include Animate.css for animation effects -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+<style>
+    .card {
+        transition: transform 0.2s; /* Scale effect on hover */
+    }
+    .card:hover {
+        transform: scale(1.05);
+    }
+</style>
+
+{% endblock %}

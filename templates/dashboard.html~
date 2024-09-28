@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title_content %}
+<h1>Hi, {{ current_user.name }}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex" id="wrapper">
+    <div class="bg-light" id="sidebar-wrapper">
+        <div class="sidebar-heading text-dark text-center py-4" id="sidebar-heading">
+            <h4>Dashboard</h4>
+        </div>
+        <div class="list-group list-group-flush" id="sidebar-menu">
+            {% if information_filled %}
+                <!-- Do not show Information Form link -->
+            {% else %}
+                <a href="{{ url_for('') }}" class="list-group-item list-group-item-action bg-light text-dark">
+                    <img src="{{ url_for('static', filename='icons/information.png') }}" alt="Information" class="icon"> <span class="menu-text">Information Form</span>
+                </a>
+            {% endif %}
+            <a href="{{ url_for('overview') }}" class="list-group-item list-group-item-action bg-light text-dark">
+                <img src="{{ url_for('static', filename='icons/research.png') }}" alt="Overview" class="icon"> <span class="menu-text">Overview</span>
+            </a>
+            <a href="{{ url_for('transactions') }}" class="list-group-item list-group-item-action bg-light text-dark">
+                <img src="{{ url_for('static', filename='icons/transaction.png') }}" alt="Transactions" class="icon"> <span class="menu-text">Transactions</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action bg-light text-dark">
+                <img src="{{ url_for('static', filename='icons/budget2.png') }}" alt="Budgets" class="icon"> <span class="menu-text">Budgets</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action bg-light text-dark">
+                <img src="{{ url_for('static', filename='icons/report.png') }}" alt="Reports" class="icon"> <span class="menu-text">Reports</span>
+            </a>
+        </div>
+    </div>
+
+    <div id="page-content-wrapper">
+        <button id="menu-toggle" class="btn btn-secondary">Toggle Menu</button>
+        {% block page_content %}
+        {% endblock %}
+    </div>
+</div>
+
+<style>
+    body {
+        margin: 0;
+        overflow-x: hidden;
+        font-family: Arial, sans-serif;
+    }
+    #wrapper {
+        height: 100vh;
+        transition: all 0.5s ease;
+    }
+    #sidebar-wrapper {
+        min-height: calc(100vh - 56px);
+        width: 250px;
+        position: fixed;
+        left: 0;
+        top: 70px;
+        transition: all 0.5s ease;
+        background-color: white;
+    }
+    #page-content-wrapper {
+        transition: margin-left 0.5s ease;
+        width: 100%;
+        padding: 20px;
+    }
+    .list-group-item {
+        transition: background-color 0.3s, color 0.3s;
+        display: flex;
+        align-items: center;
+    }
+    .list-group-item img.icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+    }
+    .menu-text {
+        transition: opacity 0.3s ease;
+    }
+</style>
+
+<script>
+    var menuToggle = document.getElementById('menu-toggle');
+    var sidebar = document.getElementById('sidebar-wrapper');
+    var menuText = document.querySelectorAll('.menu-text');
+    var sidebarHeading = document.getElementById('sidebar-heading');
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function () {
+            sidebar.classList.toggle('toggled');
+            if (sidebar.classList.contains('toggled')) {
+                menuText.forEach(text => {
+                    text.style.opacity = '0';
+                });
+                sidebarHeading.style.opacity = '0';
+                sidebar.style.width = '80px';
+            } else {
+                menuText.forEach(text => {
+                    text.style.opacity = '1';
+                });
+                sidebarHeading.style.opacity = '1';
+                sidebar.style.width = '250px';
+            }
+        });
+    }
+</script>
+
+{% endblock %}

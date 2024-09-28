@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Manage your personal finances easily with our budget tracking, investment overview, and debt tracking services.">
+    <title>Home</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="hero.css">
+</head>
+<body>
+    {% extends "base.html" %}
+
+    {% block content %}
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="container col-xxl-8 px-4 py-5">
+                <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                    <div class="col-10 col-sm-8 col-lg-6">
+                        <img src="{{ url_for('static', filename='icons/hero.png') }}" class="d-block mx-lg-auto img-fluid" alt="Placeholder Image" width="700" height="500" loading="lazy">
+                    </div>
+                    <div class="col-lg-6">
+                        <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Responsive left-aligned hero with image</h1>
+                        <p class="lead">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit.</p>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                            <a href="{{ url_for('login') }}">
+                                <button type="button" class="btn btn-primary btn-lg px-4 me-md-2" aria-label="Login">Login</button>
+                            </a>
+                            <a href="{{ url_for('register') }}">
+                                <button type="button" class="btn btn-outline-secondary btn-lg px-4" aria-label="Signup">Signup</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Section -->
+    <div class="container px-4 py-5" id="featured-3">
+        <h2 class="pb-2 border-bottom">Services</h2>
+        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+            <div class="feature col">
+                <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
+                    <img src="{{ url_for('static', filename='icons/budget.png') }}" alt="Budget Tracking Icon" width="60" height="60">
+                </div>
+                <h3 class="fs-2 text-body-emphasis">Budget Tracking</h3>
+                <p>Keep track of your budget and expenses effortlessly. Categorize your spending and see where your money goes.</p>
+            </div>
+            <div class="feature col">
+                <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
+                    <img src="{{ url_for('static', filename='icons/stock.png') }}" alt="Investment Overview" width="60" height="60">
+                </div>
+                <h3 class="fs-2 text-body-emphasis">Investment Overview</h3>
+                <p>Get a clear summary of your investments, including their current value and performance over time.</p>
+            </div>
+            <div class="feature col">
+                <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
+                    <img src="{{ url_for('static', filename='icons/debt.png') }}" alt="Debt Tracking" width="60" height="60">
+                </div>
+                <h3 class="fs-2 text-body-emphasis">Debt Tracking</h3>
+                <p>Monitor and manage your debts easily. Keep track of what you owe and plan your repayments effectively.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing Section -->
+    <div class="container px-4 py-5" id="pricing">
+        <h2 class="pb-2 border-bottom">Pricing</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <!-- Free Plan Card -->
+            <div class="col">
+                <div class="card border-primary">
+                    <div class="card-header">Free Plan</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Free</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Budget Tracking:</strong> Basic</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Expense Categorization:</strong> Limited Categories</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Debt Tracking:</strong> Basic</li>
+                            <li class="list-group-item"><i class="bi bi-x-circle"></i> <strong>Investment Overview:</strong> Not Included</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Financial Reports:</strong> Basic Reports</li>
+                            <li class="list-group-item"><i class="bi bi-x-circle"></i> <strong>Custom Budget Alerts:</strong> Not Included</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Multi-Account Support:</strong> Single Account</li>
+                            <li class="list-group-item"><i class="bi bi-x-circle"></i> <strong>Priority Customer Support:</strong> Not Included</li>
+                            <li class="list-group-item"><i class="bi bi-x-circle"></i> <strong>Data Export (CSV, Excel):</strong> Not Included</li>
+                            <li class="list-group-item"><i class="bi bi-x-circle"></i> <strong>Ad-Free Experience:</strong> No</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn btn-primary">Choose Plan</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Pro Plan Card -->
+            <div class="col">
+                <div class="card border-primary">
+                    <div class="card-header">Pro Plan</div>
+                    <div class="card-body">
+                        <h5 class="card-title">$10/month</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Budget Tracking:</strong> Advanced</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Expense Categorization:</strong> Unlimited Categories</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Debt Tracking:</strong> Advanced</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Investment Overview:</strong> Included</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Financial Reports:</strong> Detailed Reports</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Custom Budget Alerts:</strong> Included</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Multi-Account Support:</strong> Up to 3 Accounts</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Priority Customer Support:</strong> Standard Support</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Data Export (CSV, Excel):</strong> Included</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Ad-Free Experience:</strong> Yes</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn btn-primary">Choose Plan</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Premium Plan Card -->
+            <div class="col">
+                <div class="card border-primary">
+                    <div class="card-header">Premium Plan</div>
+                    <div class="card-body">
+                        <h5 class="card-title">$25/month</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Budget Tracking:</strong> Premium</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Expense Categorization:</strong> Unlimited Categories</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Debt Tracking:</strong> Premium</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Investment Overview:</strong> Included</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Financial Reports:</strong> Comprehensive Reports</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Custom Budget Alerts:</strong> Included</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Multi-Account Support:</strong> Unlimited</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Priority Customer Support:</strong> 24/7 Support</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Data Export (CSV, Excel):</strong> Included</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Ad-Free Experience:</strong> Yes</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn btn-primary">Choose Plan</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
