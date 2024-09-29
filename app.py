@@ -61,6 +61,8 @@ def login():
             session.permanent = True
             return redirect(url_for('home'))
 
+        flash('Invalid email or password', 'danger')
+
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -77,15 +79,15 @@ def register():
             cursor.execute('INSERT INTO users (name, email, password) VALUES (%s, %s, %s)',
                            (name, email, hashed_password))
             mysql.connection.commit()
+            flash('Registration successful! Please log in.', 'success')
+            return redirect(url_for('login'))
         except Exception as e:
             print(f"Error: {e}")
             mysql.connection.rollback()
             flash('Registration failed. Please try again.', 'danger')
-            return redirect(url_for('register'))
         finally:
             cursor.close()
 
-        return redirect(url_for('login'))
     return render_template('register.html')
 
 @app.route('/dashboard')
@@ -132,9 +134,11 @@ def information_form():
                  form_data['stocks'], form_data['bonds'], form_data['real_estate'])
             )
             mysql.connection.commit()
+            flash('Information saved successfully!', 'success')
         except Exception as e:
             print(f"Error inserting user information: {e}")
             mysql.connection.rollback()
+            flash('Failed to save information. Please try again.', 'danger')
         finally:
             cursor.close()
 
@@ -170,6 +174,7 @@ def edit_information():
 
         mysql.connection.commit()
         cursor.close()
+        flash('Information updated successfully!', 'success')
         return redirect(url_for('overview'))
 
     cursor.execute("SELECT * FROM user_info WHERE user_id = %s", (user_id,))
@@ -178,73 +183,15 @@ def edit_information():
 
     return render_template('information.html', user_info=user_info)
 
-
 @app.route('/overview')
 @login_required
 def overview():
     user_id = current_user.id
     cursor = mysql.connection.cursor()
-
-    # Delete rows with any empty columns
-    cursor.execute("""
-        DELETE FROM user_info 
-        WHERE user_id = %s AND (
-            full_name IS NULL OR email IS NULL OR phone IS NULL OR 
-            address IS NULL OR city IS NULL OR state IS NULL OR 
-            zip IS NULL OR job_title IS NULL OR employer IS NULL OR 
-            income IS NULL OR expenses IS NULL OR dependents IS NULL OR 
-            savings_goals IS NULL OR financial_goals IS NULL OR 
-            investment_preferences IS NULL OR notes IS NULL OR 
-            utilities IS NULL OR groceries IS NULL OR balance IS NULL OR 
-            emergency_fund IS NULL OR investments IS NULL OR 
-            vacation IS NULL OR rent IS NULL OR 
-            transport IS NULL OR entertainment IS NULL OR 
-            stocks IS NULL OR bonds IS NULL OR real_estate IS NULL
-        );
-    """, (user_id,))
-    mysql.connection.commit()
-
-    # Select the most filled row
-    cursor.execute("""
-        SELECT * FROM user_info
-        WHERE user_id = %s
-        ORDER BY 
-            (full_name IS NOT NULL) + 
-            (email IS NOT NULL) + 
-            (phone IS NOT NULL) + 
-            (address IS NOT NULL) + 
-            (city IS NOT NULL) + 
-            (state IS NOT NULL) + 
-            (zip IS NOT NULL) + 
-            (job_title IS NOT NULL) + 
-            (employer IS NOT NULL) + 
-            (income IS NOT NULL) + 
-            (expenses IS NOT NULL) + 
-            (dependents IS NOT NULL) + 
-            (savings_goals IS NOT NULL) + 
-            (financial_goals IS NOT NULL) + 
-            (investment_preferences IS NOT NULL) + 
-            (notes IS NOT NULL) + 
-            (utilities IS NOT NULL) + 
-            (groceries IS NOT NULL) + 
-            (balance IS NOT NULL) + 
-            (emergency_fund IS NOT NULL) + 
-            (investments IS NOT NULL) + 
-            (vacation IS NOT NULL) + 
-            (rent IS NOT NULL) + 
-            (transport IS NOT NULL) + 
-            (entertainment IS NOT NULL) + 
-            (stocks IS NOT NULL) + 
-            (bonds IS NOT NULL) + 
-            (real_estate IS NOT NULL) DESC
-        LIMIT 1;
-    """, (user_id,))
-
+    cursor.execute("SELECT * FROM user_info WHERE user_id = %s", (user_id,))
     user_info = cursor.fetchone()
     cursor.close()
-
     return render_template('overview.html', user_info=user_info)
-
 
 @app.route('/transactions', methods=['GET'])
 @login_required
@@ -264,47 +211,45 @@ def transactions():
 
     return render_template('transactions.html', current_balance=current_balance, user_transactions=user_transactions)
 
-
 @app.route('/add_transaction', methods=['POST'])
 @login_required
 def add_transaction():
     user_id = session['user_id']
     transaction_type = request.form['transaction_type']
-    amount = float(request.form['amount'])
+    amount = request.form['amount']
     description = request.form['description']
+    date = request.form['date']
 
     cursor = mysql.connection.cursor()
-
-    # Update the balance in user_info
     try:
-        if transaction_type == 'income':
-            cursor.execute("UPDATE user_info SET balance = balance + %s WHERE user_id = %s", (amount, user_id))
-            transaction_amount = amount
-        elif transaction_type == 'expense':
-            cursor.execute("UPDATE user_info SET balance = balance - %s WHERE user_id = %s", (amount, user_id))
-            transaction_amount = -amount
-
-        # Add transaction entry to the transactions table
         cursor.execute(
-            "INSERT INTO transactions (user_id, transaction_type, amount, description) VALUES (%s, %s, %s, %s)",
-            (user_id, transaction_type, transaction_amount, description)
-        )
-
+            "INSERT INTO transactions (user_id, transaction_type, amount, description, date) VALUES (%s, %s, %s, %s, %s)",
+            (user_id, transaction_type, amount, description, date))
         mysql.connection.commit()
+
+        cursor.execute("SELECT balance FROM user_info WHERE user_id = %s", (user_id,))
+        current_balance = cursor.fetchone()[0]
+        new_balance = current_balance + float(amount) if transaction_type == 'Income' else current_balance - float(amount)
+
+        cursor.execute("UPDATE user_info SET balance = %s WHERE user_id = %s", (new_balance, user_id))
+        mysql.connection.commit()
+
+        flash('Transaction added successfully!', 'success')
     except Exception as e:
         print(f"Error adding transaction: {e}")
         mysql.connection.rollback()
+        flash('Failed to add transaction. Please try again.', 'danger')
     finally:
         cursor.close()
 
     return redirect(url_for('transactions'))
 
-
-
 @app.route('/edit_transaction/<int:transaction_id>', methods=['GET', 'POST'])
 @login_required
 def edit_transaction(transaction_id):
+    user_id = session['user_id']
     cursor = mysql.connection.cursor()
+
     if request.method == 'POST':
         transaction_type = request.form['transaction_type']
         amount = request.form['amount']
@@ -312,15 +257,14 @@ def edit_transaction(transaction_id):
         date = request.form['date']
 
         cursor.execute(
-            "UPDATE transactions SET transaction_type=%s, amount=%s, description=%s, date=%s WHERE id=%s",
-            (transaction_type, amount, description, date, transaction_id)
-        )
+            "UPDATE transactions SET transaction_type = %s, amount = %s, description = %s, date = %s WHERE id = %s",
+            (transaction_type, amount, description, date, transaction_id))
         mysql.connection.commit()
-        cursor.close()
+
         flash('Transaction updated successfully!', 'success')
         return redirect(url_for('transactions'))
 
-    cursor.execute("SELECT * FROM transactions WHERE id = %s", (transaction_id,))
+    cursor.execute("SELECT * FROM transactions WHERE id = %s AND user_id = %s", (transaction_id, user_id))
     transaction = cursor.fetchone()
     cursor.close()
 
@@ -329,20 +273,44 @@ def edit_transaction(transaction_id):
 @app.route('/delete_transaction/<int:transaction_id>', methods=['POST'])
 @login_required
 def delete_transaction(transaction_id):
+    user_id = session['user_id']
     cursor = mysql.connection.cursor()
-    cursor.execute("DELETE FROM transactions WHERE id = %s", (transaction_id,))
-    mysql.connection.commit()
+
+    cursor.execute("SELECT amount, transaction_type FROM transactions WHERE id = %s AND user_id = %s", (transaction_id, user_id))
+    transaction = cursor.fetchone()
+
+    if transaction:
+        amount, transaction_type = transaction
+        cursor.execute("DELETE FROM transactions WHERE id = %s", (transaction_id,))
+        mysql.connection.commit()
+
+        cursor.execute("SELECT balance FROM user_info WHERE user_id = %s", (user_id,))
+        current_balance = cursor.fetchone()[0]
+
+        new_balance = current_balance + float(amount) if transaction_type == 'Income' else current_balance - float(amount)
+
+        cursor.execute("UPDATE user_info SET balance = %s WHERE user_id = %s", (new_balance, user_id))
+        mysql.connection.commit()
+
+        flash('Transaction deleted successfully!', 'success')
+    else:
+        flash('Transaction not found.', 'danger')
+
     cursor.close()
-    flash('Transaction deleted successfully!', 'success')
     return redirect(url_for('transactions'))
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
 @app.route('/balance')
 @login_required
 def balance():
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT SUM(CASE WHEN transaction_type = 'Income' THEN amount ELSE 0 END) AS total_income, "
-                   "SUM(CASE WHEN transaction_type = 'Expense' THEN amount ELSE 0 END) AS total_expenses "
-                   "FROM transactions WHERE user_id = %s", (current_user.id,))
+    cursor.execute(
+        "SELECT SUM(CASE WHEN transaction_type = 'Income' THEN amount ELSE 0 END) AS total_income, "
+        "SUM(CASE WHEN transaction_type = 'Expense' THEN amount ELSE 0 END) AS total_expenses "
+        "FROM transactions WHERE user_id = %s", (session['user_id'],)
+    )
     balance_data = cursor.fetchone()
     cursor.close()
 
@@ -351,6 +319,7 @@ def balance():
     current_balance = total_income - total_expenses
 
     return render_template('balance.html', current_balance=current_balance)
+
 
 @app.route('/set_balance', methods=['POST'])
 @login_required
@@ -370,7 +339,57 @@ def set_balance():
 
     return redirect(url_for('transactions'))
 
+@app.route('/budgets', methods=['GET', 'POST'])
+@login_required
+def budgets():
+    user_id = session['user_id']
+    cursor = mysql.connection.cursor()
 
+    if request.method == 'POST':
+        category = request.form['category']
+        amount = float(request.form['amount'])
+        cursor.execute("INSERT INTO budgets (user_id, category, amount) VALUES (%s, %s, %s)",
+                       (user_id, category, amount))
+        mysql.connection.commit()
+
+    cursor.execute("SELECT * FROM budgets WHERE user_id = %s", (user_id,))
+    budget_data = cursor.fetchall()
+    cursor.close()
+
+    return render_template('budgets.html', budgets=budget_data)
+
+
+@app.route('/edit_budget/<int:budget_id>', methods=['GET', 'POST'])
+@login_required
+def edit_budget(budget_id):
+    user_id = session['user_id']
+    cursor = mysql.connection.cursor()
+
+    if request.method == 'POST':
+        category = request.form['category']
+        amount = float(request.form['amount'])
+        cursor.execute("UPDATE budgets SET category = %s, amount = %s WHERE id = %s AND user_id = %s",
+                       (category, amount, budget_id, user_id))
+        mysql.connection.commit()
+        return redirect(url_for('budgets'))
+
+    cursor.execute("SELECT * FROM budgets WHERE id = %s AND user_id = %s", (budget_id, user_id))
+    budget = cursor.fetchone()
+    cursor.close()
+
+    return render_template('edit_budget.html', budget=budget)
+
+
+@app.route('/delete_budget/<int:budget_id>', methods=['POST'])
+@login_required
+def delete_budget(budget_id):
+    user_id = session['user_id']
+    cursor = mysql.connection.cursor()
+    cursor.execute("DELETE FROM budgets WHERE id = %s AND user_id = %s", (budget_id, user_id))
+    mysql.connection.commit()
+    cursor.close()
+
+    return redirect(url_for('budgets'))
 
 
 if __name__ == '__main__':

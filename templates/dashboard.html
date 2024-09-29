@@ -24,9 +24,10 @@
             <a href="{{ url_for('transactions') }}" class="list-group-item list-group-item-action bg-light text-dark">
                 <img src="{{ url_for('static', filename='icons/transaction.png') }}" alt="Transactions" class="icon"> <span class="menu-text">Transactions</span>
             </a>
-            <a href="#" class="list-group-item list-group-item-action bg-light text-dark">
+            <a href="{{ url_for('budgets') }}" class="list-group-item list-group-item-action bg-light text-dark">
                 <img src="{{ url_for('static', filename='icons/budget2.png') }}" alt="Budgets" class="icon"> <span class="menu-text">Budgets</span>
             </a>
+
             <a href="#" class="list-group-item list-group-item-action bg-light text-dark">
                 <img src="{{ url_for('static', filename='icons/report.png') }}" alt="Reports" class="icon"> <span class="menu-text">Reports</span>
             </a>
