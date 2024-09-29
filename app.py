@@ -8,10 +8,10 @@ import os
 app = Flask(__name__)
 app.secret_key = "arham"
 
-app.config['MYSQL_HOST'] = "127.0.0.1"
-app.config['MYSQL_USER'] = "root"
+app.config['MYSQL_HOST'] = "localhost"
+app.config['MYSQL_USER'] = "jawadarham896_arham"
 app.config['MYSQL_PASSWORD'] = "root"
-app.config['MYSQL_DB'] = "user"
+app.config['MYSQL_DB'] = "jawadarham896_user"
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
 mysql = MySQL(app)
@@ -206,13 +206,25 @@ def transactions():
     user_id = session['user_id']
     cursor = mysql.connection.cursor()
 
-    cursor.execute("SELECT balance FROM user_info WHERE user_id = %s", (user_id,))
-    current_balance = cursor.fetchone()[0]
+    try:
+        cursor.execute("SELECT balance FROM user_info WHERE user_id = %s", (user_id,))
+        current_balance = cursor.fetchone()
 
-    cursor.execute(
-        "SELECT id, user_id, transaction_type, amount, description, date FROM transactions WHERE user_id = %s",
-        (user_id,))
-    user_transactions = cursor.fetchall()
+        # Check if current_balance is not None and extract the balance
+        if current_balance is not None:
+            current_balance = current_balance[0]
+        else:
+            current_balance = 0  # Default value if no balance is found
+
+        cursor.execute(
+            "SELECT id, user_id, transaction_type, amount, description, date FROM transactions WHERE user_id = %s",
+            (user_id,))
+        user_transactions = cursor.fetchall()
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error occurred: {e}")
+        current_balance = 0
+        user_transactions = []
 
     cursor.close()
 
@@ -442,4 +454,4 @@ def thank_you():
     return render_template('thank_you.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    app.run(debug=True)
