@@ -3,6 +3,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
 from datetime import timedelta
+import os
 
 app = Flask(__name__)
 app.secret_key = "arham"
@@ -441,4 +442,4 @@ def thank_you():
     return render_template('thank_you.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
