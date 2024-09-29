@@ -1,10 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+{% extends 'dashboard.html' %}
 
-</body>
-</html>
+{% block page_content %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">Edit Budget</h1>
+
+    <div class="row">
+        <!-- Edit Budget Form Card -->
+        <div class="col-md-6 mb-4 mx-auto">
+            <div class="card shadow-sm border-light animate__animated animate__fadeIn">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">Edit Your Budget</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('edit_budget', budget_id=budget_info[0]) }}">
+                        <div class="mb-3">
+                            <label for="budgetName" class="form-label">Budget Name</label>
+                            <input type="text" class="form-control" id="budgetName" name="category" value="{{ budget_info[1] }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="budgetAmount" class="form-label">Budget Amount</label>
+                            <input type="number" class="form-control" id="budgetAmount" name="amount" value="{{ budget_info[2] }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="budgetDate" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="budgetDate" name="date" value="{{ budget_info[3] }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="budgetType" class="form-label">Budget Type</label>
+                            <select class="form-control" id="budgetType" name="budget_type" required>
+                                <option value="Fixed" {% if budget_info[4] == 'Fixed' %}selected{% endif %}>Fixed</option>
+                                <option value="Variable" {% if budget_info[4] == 'Variable' %}selected{% endif %}>Variable</option>
+                                <option value="Discretionary" {% if budget_info[4] == 'Discretionary' %}selected{% endif %}>Discretionary</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="budgetDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="budgetDescription" name="description">{{ budget_info[5] }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Budget</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-3">
+        <a href="{{ url_for('overview') }}" class="btn btn-secondary">Back to Overview</a>
+    </div>
+
+</div>
+
+<!-- Include Animate.css for animation effects -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+<style>
+    .card {
+        transition: transform 0.2s; /* Scale effect on hover */
+    }
+    .card:hover {
+        transform: scale(1.05);
+    }
+</style>
+
+{% endblock %}

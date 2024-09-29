@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports</title>
+</head>
+<body>
+    <h1>Your Reports</h1>
+    <table>
+        <tr>
+            <th>Report Date</th>
+            <th>Total Income</th>
+            <th>Total Expenses</th>
+            <th>Net Savings</th>
+        </tr>
+        {% for report in reports %}
+        <tr>
+            <td>{{ report[2] }}</td>
+            <td>{{ report[3] }}</td>
+            <td>{{ report[4] }}</td>
+            <td>{{ report[5] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

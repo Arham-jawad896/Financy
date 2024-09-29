@@ -1,0 +1,45 @@
+{% extends 'dashboard.html' %}
+
+{% block page_content %}
+<div class="container mt-5">
+    <div class="text-center">
+        <h2 class="display-4 animated fadeIn">Thank You for Your Feedback!</h2>
+        <p class="lead animated fadeIn">We appreciate you taking the time to provide us with your thoughts.</p>
+        <p class="mb-4">Your feedback helps us improve the app and serve you better.</p>
+        <p class="mb-4">Thank you for using our app!</p>
+        <a href="{{ url_for('overview') }}" class="btn btn-primary btn-lg animated fadeIn">Return to Dashboard</a>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #e9ecef; /* Light gray background */
+        animation: fadeIn 1s; /* Animation for fading in the whole page */
+    }
+    h2 {
+        color: #343a40; /* Dark gray for headings */
+    }
+    .lead {
+        color: #6c757d; /* Lighter gray for lead text */
+    }
+
+    /* CSS animation */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .animated {
+        animation-duration: 1s;
+        animation-fill-mode: both; /* Keep the final state of the animation */
+    }
+
+    .btn-primary {
+        background-color: #007bff; /* Bootstrap primary color */
+        border: none; /* Remove border */
+    }
+    .btn-primary:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+    }
+</style>
+{% endblock %}
