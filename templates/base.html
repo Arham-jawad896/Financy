@@ -13,31 +13,158 @@
             margin-top: 20px;
         }
         .nav-item img {
-            width: 24px;
-            height: 24px;
-            display: block;
-            margin: 0 auto 5px;
+            width: 20px; /* Reduced icon size */
+            height: 20px; /* Reduced icon size */
+            margin-bottom: 2px; /* Reduced margin below icons */
         }
         .nav-link {
             text-align: center;
+            padding: 5px 0; /* Reduced padding for links */
         }
         .navbar .nav-link:hover {
             transform: scale(1.1);
             transition: transform 0.3s ease-in-out;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 1600px) {
+            .nav-link {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 1400px) {
+            .nav-link {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .nav-link {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .nav-item {
+                flex: 1 1 auto; /* Adjusted flex properties for responsiveness */
+            }
+            .nav-link {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-item {
+                flex: 1 1 auto; /* Ensures items stay grouped together */
+            }
+            .nav-link {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .nav-item {
+                flex: 1 1 auto; /* Keeps items from stretching */
+            }
+            .nav-link {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 5px 0; /* Reduced padding on navbar */
+            }
+            .nav-link {
+                display: block;
+                padding: 2px; /* Further reduced padding for links */
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 425px) {
+            .alert {
+                font-size: 0.9rem;
+            }
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .navbar {
+                padding: 5px; /* Further reduced padding */
+            }
+        }
+
+        @media (max-width: 320px) {
+            .navbar-brand {
+                font-size: 1rem;
+            }
+            .nav-item img {
+                width: 18px; /* Further reduced icon size */
+                height: 18px; /* Further reduced icon size */
+            }
+            .nav-link {
+                padding: 1px; /* Further reduced padding for links */
+                font-size: 0.6rem;
+            }
+        }
+
+        @media (max-width: 1600px) {
+            .navbar {
+                background-color: #f8f9fa;
+            }
+        }
+
+        @media (max-width: 1400px) {
+            .nav-item img {
+                width: 22px; /* Adjusted icon size */
+                height: 22px; /* Adjusted icon size */
+            }
+        }
+
+        @media (max-width: 1280px) {
+            .navbar {
+                border-bottom: 1px solid #ccc;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                margin-top: 15px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .nav-link {
+                padding: 5px 0; /* Further reduced padding */
+            }
+        }
+
+        @media (max-width: 800px) {
+            .navbar {
+                flex-direction: row; /* Maintain horizontal layout */
+                justify-content: flex-start; /* Align items to the left */
+                padding: 0; /* Remove padding for compactness */
+            }
+        }
+
+        @media (max-width: 700px) {
+            .nav-link {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 80px;">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="{{ url_for('dashboard') if current_user.is_authenticated else url_for('home') }}">Financy</a>
-    <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
-            data-target="#navbarNav" data-toggle="collapse" type="button">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
+    <div class="navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav flex-row w-100 justify-content-start"> <!-- Updated to 'justify-content-start' -->
             {% if current_user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('overview') }}">

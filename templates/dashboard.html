@@ -7,32 +7,36 @@
 {% block content %}
 <div class="d-flex" id="wrapper">
     <div class="bg-light" id="sidebar-wrapper">
-        <div class="sidebar-heading text-dark text-center py-4" id="sidebar-heading">
-            <h4>Dashboard</h4>
+        <div id="sidebar-heading" class="text-center py-4">
+            <div class="sidebar-decorator">
+                <span class="decorator-text">💼</span>
+            </div>
         </div>
         <div class="list-group list-group-flush" id="sidebar-menu">
             {% if information_filled %}
                 <!-- Do not show Information Form link -->
             {% else %}
                 <a href="{{ url_for('information_form') }}" class="list-group-item list-group-item-action bg-light text-dark">
-                    <img src="{{ url_for('static', filename='icons/information.png') }}" alt="Information" class="icon"> <span class="menu-text">Information Form</span>
+                    <img src="{{ url_for('static', filename='icons/information.png') }}" alt="Information" class="icon">
+                    <span class="menu-text">Information Form</span>
                 </a>
             {% endif %}
             <a href="{{ url_for('overview') }}" class="list-group-item list-group-item-action bg-light text-dark">
-                <img src="{{ url_for('static', filename='icons/research.png') }}" alt="Overview" class="icon"> <span class="menu-text">Overview</span>
+                <img src="{{ url_for('static', filename='icons/research.png') }}" alt="Overview" class="icon">
+                <span class="menu-text">Overview</span>
             </a>
             <a href="{{ url_for('budgets') }}" class="list-group-item list-group-item-action bg-light text-dark">
-                <img src="{{ url_for('static', filename='icons/budget2.png') }}" alt="Budgets" class="icon"> <span class="menu-text">Budgets</span>
+                <img src="{{ url_for('static', filename='icons/budget2.png') }}" alt="Budgets" class="icon">
+                <span class="menu-text">Budgets</span>
             </a>
-
             <a href="{{ url_for('feedback') }}" class="list-group-item list-group-item-action bg-light text-dark">
-                <img src="{{ url_for('static', filename='icons/report.png') }}" alt="Reports" class="icon"> <span class="menu-text">Feedback</span>
+                <img src="{{ url_for('static', filename='icons/report.png') }}" alt="Reports" class="icon">
+                <span class="menu-text">Feedback</span>
             </a>
         </div>
     </div>
 
     <div id="page-content-wrapper">
-        <button id="menu-toggle" class="btn btn-secondary">Toggle Menu</button>
         {% block page_content %}
         {% endblock %}
     </div>
@@ -42,65 +46,193 @@
     body {
         margin: 0;
         overflow-x: hidden;
-        font-family: Arial, sans-serif;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #e0eafc, #cfdef3); /* Sleek gradient background */
     }
+
     #wrapper {
         height: 100vh;
         transition: all 0.5s ease;
     }
+
     #sidebar-wrapper {
         min-height: calc(100vh - 56px);
-        width: 250px;
+        width: 80px;
         position: fixed;
         left: 0;
-        top: 70px;
+        top: 100px;
         transition: all 0.5s ease;
-        background-color: white;
+        background: #ffffff;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        animation: slideIn 0.5s ease; /* Animation for sidebar */
     }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(-100%);
+        }
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    #sidebar-heading {
+        display: flex;
+        justify-content: center;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .sidebar-decorator {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #6e7f80, #a1c4d4, #d8e1e8);
+        animation: pulse 1.5s infinite;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        border: 2px solid #fff; /* Adding a classy white border */
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+    }
+
     #page-content-wrapper {
         transition: margin-left 0.5s ease;
-        width: 100%;
         padding: 20px;
+        width: 100%;
+        margin-left: 80px;
+        animation: fadeInUp 0.5s ease; /* Fade-in animation for content */
     }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
     .list-group-item {
         transition: background-color 0.3s, color 0.3s;
         display: flex;
         align-items: center;
+        justify-content: center;
+        padding: 10px;
+        border-radius: 8px;
+        position: relative; /* For pseudo-element effect */
+        overflow: hidden; /* For clipping the hover effect */
+        background: linear-gradient(145deg, #d8e1e8, #ffffff);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        color: #333;
+        font-weight: bold;
     }
+
+    .list-group-item:hover {
+        background-color: #f0f8ff; /* Light blue on hover */
+        transform: scale(1.05); /* Slightly enlarge on hover */
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); /* Shadow on hover */
+        animation: bounce 0.5s; /* Bounce effect */
+        color: #000; /* Darker text on hover */
+    }
+
+    .list-group-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.4);
+        transition: transform 0.3s ease;
+        transform: translateX(-100%);
+    }
+
+    .list-group-item:hover::before {
+        transform: translateX(0); /* Shine effect */
+    }
+
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-5px);
+        }
+        60% {
+            transform: translateY(-2.5px);
+        }
+    }
+
     .list-group-item img.icon {
         width: 20px;
         height: 20px;
-        margin-right: 10px;
+        transition: transform 0.3s, filter 0.3s; /* Icon scaling effect with glow */
     }
+
+    .list-group-item:hover img.icon {
+        transform: rotate(15deg); /* Rotate icon on hover */
+        filter: drop-shadow(0 0 10px rgba(0, 0, 255, 0.5)); /* Glowing effect */
+        animation: shake 0.5s; /* Shake animation */
+    }
+
+    @keyframes shake {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-2px); }
+        50% { transform: translateX(2px); }
+        75% { transform: translateX(-2px); }
+        100% { transform: translateX(0); }
+    }
+
     .menu-text {
-        transition: opacity 0.3s ease;
+        display: none;
+    }
+
+    /* Responsive Media Queries */
+    @media (max-width: 480px) {
+        #sidebar-wrapper {
+            width: 60px;
+        }
+    }
+
+    /* Additional elegant effects */
+    .list-group-item:active {
+        transform: translateY(2px); /* Button press effect */
+    }
+
+    .list-group-item:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 4px;
+        height: 100%;
+        background-color: transparent;
+        transition: background-color 0.3s; /* Transition for left bar */
+        z-index: 0; /* Ensure it's behind the content */
+    }
+
+    .list-group-item:hover:before {
+        background-color: #6e7f80; /* Color change on hover */
     }
 </style>
 
 <script>
-    var menuToggle = document.getElementById('menu-toggle');
-    var sidebar = document.getElementById('sidebar-wrapper');
-    var menuText = document.querySelectorAll('.menu-text');
-    var sidebarHeading = document.getElementById('sidebar-heading');
-
-    if (menuToggle) {
-        menuToggle.addEventListener('click', function () {
-            sidebar.classList.toggle('toggled');
-            if (sidebar.classList.contains('toggled')) {
-                menuText.forEach(text => {
-                    text.style.opacity = '0';
-                });
-                sidebarHeading.style.opacity = '0';
-                sidebar.style.width = '80px';
-            } else {
-                menuText.forEach(text => {
-                    text.style.opacity = '1';
-                });
-                sidebarHeading.style.opacity = '1';
-                sidebar.style.width = '250px';
-            }
-        });
-    }
+    // No need for toggle functionality since the sidebar is always collapsed
 </script>
 
 {% endblock %}

@@ -79,7 +79,6 @@ def load_user(user_id):
 def home():
     return render_template('dashboard.html') if current_user.is_authenticated else render_template('home.html')
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -89,12 +88,13 @@ def login():
 
         if user and bcrypt.check_password_hash(user.password, password):
             login_user(user)
+            user.last_login = datetime.utcnow()  # Update last login time
+            db.session.commit()  # Save the last login time
             session['user_id'] = user.id
             session.permanent = True
             return redirect(url_for('home'))
 
     return render_template('login.html')
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -111,13 +111,12 @@ def register():
 
     return render_template('register.html')
 
-
 @app.route('/dashboard')
 @login_required
 def dashboard():
     user_info = current_user.user_info
     information_filled = user_info is not None and all(value is not None for value in vars(user_info).values())
-    return render_template('dashboard.html', information_filled=information_filled)
+    return render_template('overview.html', information_filled=information_filled)
 
 
 @app.route('/logout')
@@ -195,16 +194,14 @@ def edit_information():
     return render_template('information.html', user_info=user_info)
 
 @app.route('/overview', methods=['GET'])
-@login_required  # Ensure the user is logged in
+@login_required
 def overview():
-    # Assuming you have a function to get the user's info by their ID
-    userId = current_user.id  # Get the currently logged-in user's ID
-    user_info = db.session.execute(
-        db.select(UserInfo).filter_by(user_id=userId)  # Replace UserInfo with your actual model name
-    ).scalars().first()  # Fetch the first result
+    # Get the currently logged-in user's ID
+    user_info = current_user.user_info
 
-    if user_info is None:
-        return "No user information found", 404  # Handle case where no info is found
+    # Check if the user_info is incomplete
+    if not user_info or any(value is None for value in vars(user_info).values()):
+        return render_template('incomplete_information.html')
 
     return render_template('overview.html', user_info=user_info)
 
@@ -300,6 +297,11 @@ def feedback():
 def thank_you():
     return render_template('thank_you.html')
 
+@app.route('/users', methods=['GET'])
+@login_required  # Ensure the user is logged in to view this page
+def display_users():
+    users = User.query.all()  # Retrieve all users from the database
+    return render_template('users.html', users=users)
 
 if __name__ == '__main__':
     with app.app_context():
