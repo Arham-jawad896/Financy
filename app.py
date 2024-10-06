@@ -1,9 +1,16 @@
-from flask import Flask, request, render_template, url_for, redirect, session, flash
+import logging
+
+import requests
+from flask import Flask, request, render_template, url_for, redirect, session, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from datetime import timedelta, datetime
 from flask_sqlalchemy import SQLAlchemy
 import os
+import stripe
+import http.client
+import json
+
 
 app = Flask(__name__)
 app.secret_key = "arham"
@@ -12,6 +19,11 @@ basedir = os.path.abspath(os.path.dirname(__file__))  # Get the current director
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "user.db")}'  # This will create user.db in the root directory
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
+stripe.api_key = 'sk_test_51Q69GpRvsBQNtu67JJKHWWIe3aev6O3KA76OHi8C6tfdPWiA3QBFnmfWZhxLowtOUJj0DVqpWxXLWf8YTK1HXkEr00KOyS1gK8'
+app.config['STRIPE_PUBLIC_KEY'] = 'pk_test_51Q69GpRvsBQNtu670asqWTEMyyigz4rnVPBftBBZcRpbWtn2qF5hfWsh3oveWg54H0Xa4HvopFXoXt2IX9xZuspM00dK7LzUw3'
+YOUR_DOMAIN = 'http://127.0.0.1:5000/'
+API_KEY = 'e4b6b5fa33b50de0fbfb98d8'
+BASE_URL = 'https://api.exchangerate-api.com/v4/latest/'
 
 bcrypt = Bcrypt(app)
 login_manager = LoginManager()
@@ -19,13 +31,20 @@ login_manager.init_app(app)
 db = SQLAlchemy(app)
 
 
-class User(UserMixin, db.Model):
+class User(db.Model, UserMixin):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(150))
-    email = db.Column(db.String(150), unique=True)
-    password = db.Column(db.String(150))
+    name = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+    subscription_plan = db.Column(db.String(50), default='Free')
+
+    # Define relationship to user_info
     user_info = db.relationship('UserInfo', backref='user', uselist=False)
 
+    @property
+    def is_active(self):
+        return True
 
 class UserInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -69,11 +88,29 @@ class Budget(db.Model):
     budget_type = db.Column(db.String(50))
     description = db.Column(db.Text)
 
+class Transaction(db.Model):
+    __tablename__ = 'transactions'  # Ensure the table name is plural
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    transaction_type = db.Column(db.String(50), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    description = db.Column(db.String(200), nullable=False)  # This line should match your table
+    date = db.Column(db.Date, nullable=False)
+    user = db.relationship('User', backref='transactions')
+
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+@app.route('/plus')
+@login_required
+def plus():
+    if current_user.subscription_plan != 'plus':
+        flash('Access restricted to Plus plan users only.', 'danger')
+        return redirect(url_for('pricing'))  # Redirect non-Plus users to pricing
+
+    return render_template('plus/transactions.html')
 
 @app.route('/')
 def home():
@@ -99,15 +136,42 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        password = request.form['password']
+        # Debugging: Check what data is being sent
+        print("Form Data:", request.form)
+
+        # Use .get() to avoid KeyError
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # Check if any of the fields are empty
+        if not name or not email or not password:
+            flash("All fields are required!", "danger")
+            return redirect(url_for('register'))
+
+        # Check if email is already in use
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash("Email is already registered!", "danger")
+            return redirect(url_for('register'))
+
+        # Hash the password
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
+        # Create new user instance
         new_user = User(name=name, email=email, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        return redirect(url_for('login'))
+
+        # Add and commit the new user to the database
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash("Registration successful! Please log in.", "success")
+            return redirect(url_for('login'))
+        except Exception as e:
+            db.session.rollback()  # Rollback the session on error
+            print("Error during registration:", e)
+            flash("An error occurred while registering. Please try again.", "danger")
+            return redirect(url_for('register'))
 
     return render_template('register.html')
 
@@ -116,7 +180,17 @@ def register():
 def dashboard():
     user_info = current_user.user_info
     information_filled = user_info is not None and all(value is not None for value in vars(user_info).values())
-    return render_template('overview.html', information_filled=information_filled)
+
+    # Get the user's subscription plan from the users table
+    subscription_plan = current_user.subscription_plan  # Assuming 'subscription_plan' is a field in your User model
+
+    if subscription_plan == 'plus':
+        return redirect(url_for('plus_page'))  # Redirect to Plus page
+    elif subscription_plan == 'premium':
+        return redirect(url_for('premium_page'))  # Redirect to Premium page
+
+    return render_template('overview.html',
+                           information_filled=information_filled)  # Render the overview for free plan users
 
 
 @app.route('/logout')
@@ -125,12 +199,6 @@ def logout():
     logout_user()
     session.pop('user_id', None)
     return redirect(url_for('home'))
-
-
-@app.route('/pricing')
-def pricing():
-    return render_template('pricing.html')
-
 
 @app.route('/information', methods=['GET', 'POST'])
 @login_required
@@ -297,11 +365,230 @@ def feedback():
 def thank_you():
     return render_template('thank_you.html')
 
-@app.route('/users', methods=['GET'])
-@login_required  # Ensure the user is logged in to view this page
-def display_users():
-    users = User.query.all()  # Retrieve all users from the database
-    return render_template('users.html', users=users)
+@app.route('/create_checkout_session', methods=['POST'])
+def create_checkout_session():
+    currency = request.form.get('currency')
+    plan = request.form.get('plan')
+
+    # Define the price based on the plan and currency
+    prices = {
+        'plus': {
+            'USD': 500,  # 5.00 in cents
+            'EUR': 500,  # 5.00 in cents
+        },
+        'premium': {
+            'USD': 1000,  # 10.00 in cents
+            'EUR': 1000,  # 10.00 in cents
+        }
+    }
+
+    if plan not in prices or currency not in prices[plan]:
+        return redirect(url_for('pricing'))  # Redirect to pricing if plan or currency is invalid
+
+    # Create a new checkout session with Stripe
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[
+            {
+                'price_data': {
+                    'currency': currency,
+                    'product_data': {
+                        'name': f'{plan.capitalize()} Plan',
+                    },
+                    'unit_amount': prices[plan][currency],
+                },
+                'quantity': 1,
+            },
+        ],
+        mode='payment',
+        success_url=YOUR_DOMAIN + 'success?plan=' + plan,  # Pass the plan in the query parameter
+        cancel_url=YOUR_DOMAIN + 'cancel',
+    )
+
+    return redirect(checkout_session.url, code=303)
+
+
+@app.route('/webhook', methods=['POST'])
+def stripe_webhook():
+    payload = request.get_data(as_text=True)
+    sig_header = request.headers.get('Stripe-Signature')
+    endpoint_secret = 'whsec_your_endpoint_secret'
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        # Invalid payload
+        return {}, 400
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return {}, 400
+
+    # Handle the event
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+
+        # Retrieve user by email (or modify as per your structure)
+        user = User.query.filter_by(email=session.get('customer_email')).first()
+
+        if user:
+            plan = session['metadata']['plan']  # Ensure the session contains the plan metadata
+            user.subscription_plan = plan
+            db.session.commit()
+
+    return {}, 200
+
+
+@app.route('/success')
+def success():
+    if not current_user.is_authenticated:
+        flash('You need to be logged in to access this page.', 'warning')
+        return redirect(url_for('home'))  # Redirect to home or login page
+
+    user = User.query.get(current_user.id)  # Get the authenticated user
+    plan = request.args.get('plan')  # Get the plan from the URL query parameters
+
+    if plan in ['plus', 'premium']:
+        user.subscription_plan = plan  # Update the user's subscription plan
+        db.session.commit()  # Commit the changes to the database
+
+    return render_template('success.html', plan=user.subscription_plan)
+
+
+@app.route('/cancel')
+def cancel():
+    return render_template('cancel.html')
+
+
+@app.route('/pricing')
+def pricing():
+    return render_template('pricing.html')
+
+
+@app.route('/transactions', methods=['GET', 'POST'])
+@login_required
+def transactions():
+    if request.method == 'POST':
+        user_id = current_user.id
+        transaction_type = request.form['transaction_type']
+        amount = request.form['amount']
+        description = request.form.get('description')
+        date = request.form['date']
+
+        # Convert the date string to a date object
+        date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+
+        new_transaction = Transaction(
+            user_id=user_id,
+            transaction_type=transaction_type,
+            amount=amount,
+            description=description,
+            date=date_obj
+        )
+
+        db.session.add(new_transaction)
+        db.session.commit()
+        flash('Transaction added successfully!', 'success')
+        return redirect(url_for('transactions'))
+
+    # Retrieve all transactions for the current user
+    user_transactions = Transaction.query.filter_by(user_id=current_user.id).all()
+    return render_template('plus/transactions.html', transactions=user_transactions)
+
+
+@app.route('/edit-transaction/<int:transaction_id>', methods=['GET', 'POST'])
+def edit_transaction(transaction_id):
+    # Fetch the transaction to edit directly from the database
+    transaction = db.session.query(Transaction).filter(Transaction.id == transaction_id).first()
+
+    if not transaction:
+        flash('Transaction not found.', 'error')
+        return redirect(url_for('transactions'))  # Redirect if transaction doesn't exist
+
+    if request.method == 'POST':
+        amount = request.form['amount']
+        description = request.form['description']
+        date_str = request.form['date']
+
+        # Convert the string date to a datetime object
+        date = datetime.strptime(date_str, '%Y-%m-%d').date()
+
+        # Update the transaction in the database
+        transaction.amount = amount
+        transaction.description = description
+        transaction.date = date
+
+        try:
+            db.session.commit()
+            return redirect(url_for('transactions'))  # Redirect to the transactions page
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while updating the transaction: {}'.format(str(e)), 'error')
+
+    return render_template('plus/edit_transaction.html', transaction=transaction)
+
+@app.route('/delete-transaction/<int:transaction_id>', methods=['POST'])
+def delete_transaction(transaction_id):
+    transaction = Transaction.query.get(transaction_id)
+    db.session.delete(transaction)
+    db.session.commit()
+    return redirect(url_for('transactions'))
+
+@app.route('/api/rates', methods=['GET'])
+def get_exchange_rates():
+    """Get current exchange rates."""
+    base_currency = request.args.get('base', 'USD')  # Default base currency is USD
+    url = f'{BASE_URL}{base_currency}'
+
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        return jsonify(response.json())
+    else:
+        return jsonify({'error': 'Could not retrieve exchange rates'}), response.status_code
+
+
+@app.route('/api/convert', methods=['GET'])
+def convert_currency():
+    amount = request.args.get('amount', type=float)
+    from_currency = request.args.get('from')
+    to_currency = request.args.get('to')
+
+    if amount is None or from_currency is None or to_currency is None:
+        return jsonify({'error': 'Amount, from_currency, and to_currency are required'}), 400
+
+    try:
+        # Fetch exchange rates for the 'from_currency'
+        rates_response = requests.get(f'{BASE_URL}{from_currency}')
+        if rates_response.status_code == 200:
+            rates = rates_response.json().get('rates', {})
+            if to_currency not in rates:
+                return jsonify({'error': f'Currency {to_currency} not available'}), 400
+
+            converted_amount = amount * rates[to_currency]
+            return jsonify({
+                'from': from_currency,
+                'to': to_currency,
+                'amount': amount,
+                'converted_amount': converted_amount
+            })
+        else:
+            return jsonify({'error': 'Could not retrieve exchange rates'}), rates_response.status_code
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/plus/currency')
+def currency_converter():
+    """Render the currency converter template with available currencies."""
+    # Fetch exchange rates to get available currencies
+    response = requests.get(f'{BASE_URL}USD')  # You can choose any base currency
+    if response.status_code == 200:
+        currencies = list(response.json().get('rates', {}).keys())
+        return render_template('plus/currency.html', currencies=currencies)
+    else:
+        return "Error retrieving currencies", response.status_code
 
 if __name__ == '__main__':
     with app.app_context():

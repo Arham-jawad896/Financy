@@ -1,28 +1,79 @@
-
 {% extends "base.html" %}
 
 {% block content %}
- <style>
-        /* Centering the form vertically and horizontally */
-        body, html {
-            height: 100%;
+<style>
+    /* Centering the form vertically and horizontally */
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background-color: #0B0C10; /* Rich Black */
+    }
+
+    .centered-form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .form-container {
+        width: 100%;
+        max-width: 500px; /* You can adjust the max-width as needed */
+        background-color: #1F2833; /* Gunmetal */
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        animation: fadeIn 0.5s ease;
+    }
+
+    h1 {
+        color: #C5C6C7; /* Platinum */
+        text-align: center;
+    }
+
+    .form-group label {
+        color: #C5C6C7; /* Platinum */
+    }
+
+    .form-control {
+        background-color: #4E5D6C; /* Deep Space Sparkle */
+        color: #C5C6C7; /* Platinum */
+        border: 1px solid #66FCF1; /* Electric Blue */
+    }
+
+    .form-control::placeholder {
+        color: #C5C6C7; /* Platinum */
+    }
+
+    .btn {
+        background-color: #66FCF1; /* Electric Blue */
+        color: #0B0C10; /* Rich Black */
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .btn:hover {
+        background-color: #45A29E; /* Neon Green */
+        transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
         }
-        .centered-form {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
-        .form-container {
-            width: 100%;
-            max-width: 500px; /* You can adjust the max-width as needed */
-        }
-    </style>
+    }
+</style>
+
 <div class="centered-form">
     <div class="form-container">
-        <h1 class="text-center">Login</h1>
+        <h1>Login</h1>
         <form action="{{ url_for('login') }}" method="POST">
-           <div class="form-group">
+            <div class="form-group">
                 <label for="email">Email address</label>
                 <input name="email" aria-describedby="emailHelp" class="form-control" id="email" placeholder="Enter email" type="email" required>
             </div>

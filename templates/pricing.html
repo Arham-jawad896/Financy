@@ -1,0 +1,181 @@
+{% extends 'dashboard.html' %}
+
+{% block page_content %}
+<head>
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            font-family: 'Roboto', sans-serif;
+            background-color: #0B0C10; /* Rich Black */
+            color: white;
+        }
+
+        .pricing-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 40px 0;
+            color: #C5C6C7; /* Platinum */
+        }
+
+        .pricing-card {
+            background-color: #1F2833; /* Gunmetal background */
+            color: #C5C6C7;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            margin: 15px;
+            text-align: center;
+            flex: 1 1 calc(50% - 30px);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .pricing-card h2 {
+            color: #66FCF1; /* Electric Blue */
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .pricing-card p {
+            color: #C5C6C7;
+            font-size: 1.2em;
+            margin: 15px 0;
+        }
+
+        .pricing-card .price {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #66FCF1;
+            margin: 20px 0;
+        }
+
+        .pricing-card .features {
+            list-style-type: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .pricing-card .features li {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .pricing-card .features li::before {
+            content: "✔️"; /* Checkmark */
+            color: #66FCF1;
+            margin-right: 10px;
+        }
+
+        .pricing-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Subscribe Button Styles */
+        .subscribe-btn {
+            background-color: #66FCF1; /* Electric Blue */
+            color: #0B0C10; /* Rich Black */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .subscribe-btn:hover {
+            background-color: #45A29E; /* A slightly darker blue-green */
+        }
+
+        /* Form Styles */
+        .subscription-form {
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .subscription-form label {
+            display: block;
+            margin: 5px 0;
+            color: #C5C6C7;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 2px solid #66FCF1; /* Electric Blue */
+            border-radius: 5px;
+            background-color: #1F2833; /* Gunmetal */
+            color: #C5C6C7;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        select:hover, select:focus {
+            border-color: #45A29E; /* A slightly darker blue-green */
+            outline: none;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .pricing-card {
+                flex: 1 1 calc(100% - 30px);
+            }
+        }
+    </style>
+    <script>
+        function updatePlanDetails() {
+            const select = document.getElementById('plan');
+            const planTitle = document.getElementById('plan-title');
+            const planPrice = document.getElementById('plan-price');
+            if (select.value === 'plus') {
+                planTitle.textContent = 'Financy Plus';
+                planPrice.textContent = '€5/month / $5/month';
+            } else {
+                planTitle.textContent = 'Financy Premium';
+                planPrice.textContent = '€10/month / $10/month';
+            }
+        }
+    </script>
+</head>
+<body>
+
+<!-- Pricing Section -->
+<div class="container px-4 py-5" id="pricing">
+    <h2 class="pb-2 border-bottom text-body-emphasis">Pricing Plans</h2>
+    <div class="row row-cols-1 g-4 pricing-container">
+        <!-- Financy Plan Card -->
+        <div class="col">
+            <div class="pricing-card">
+                <h2 id="plan-title">Financy Plus</h2>
+                <p id="plan-price" class="price">€5/month / $5/month</p>
+                <ul class="features">
+                    <li>Access to Premium Features</li>
+                    <li>Basic Investment Insights</li>
+                    <li>Monthly Financial Reports</li>
+                </ul>
+                <form action="/create_checkout_session" method="POST" class="subscription-form">
+                    <label for="plan">Select Plan:</label>
+                    <select name="plan" id="plan" onchange="updatePlanDetails()">
+                        <option value="plus">Plus</option>
+                        <option value="premium">Premium</option>
+                    </select>
+
+                    <label for="currency">Select Currency:</label>
+                    <select name="currency" id="currency">
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                    </select>
+
+                    <button type="submit" class="subscribe-btn">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -13,17 +13,44 @@
             margin-top: 20px;
         }
         .nav-item img {
-            width: 20px; /* Reduced icon size */
-            height: 20px; /* Reduced icon size */
-            margin-bottom: 2px; /* Reduced margin below icons */
+            width: 20px;
+            height: 20px;
+            margin-bottom: 2px;
         }
         .nav-link {
             text-align: center;
-            padding: 5px 0; /* Reduced padding for links */
+            padding: 5px 0;
+            color: #ffffff; /* Text color */
+        }
+        .navbar {
+            background-color: #343a40; /* Dark background */
         }
         .navbar .nav-link:hover {
             transform: scale(1.1);
             transition: transform 0.3s ease-in-out;
+            color: #f8c145; /* Hover text color */
+        }
+
+        .navbar-brand {
+            color: #f8c145; /* Brand color */
+        }
+
+        .navbar-brand:hover {
+            color: #ffffff; /* Brand hover color */
+        }
+
+        .container {
+            color: #eeeeee; /* Container text color */
+        }
+
+        .btn-primary {
+            background-color: #f8c145; /* Button background */
+            border-color: #f8c145;
+        }
+
+        .btn-primary:hover {
+            background-color: #f39c12; /* Button hover background */
+            border-color: #f39c12;
         }
 
         /* Media Queries for Responsiveness */
@@ -47,7 +74,7 @@
 
         @media (max-width: 992px) {
             .nav-item {
-                flex: 1 1 auto; /* Adjusted flex properties for responsiveness */
+                flex: 1 1 auto;
             }
             .nav-link {
                 font-size: 0.9rem;
@@ -56,7 +83,7 @@
 
         @media (max-width: 768px) {
             .nav-item {
-                flex: 1 1 auto; /* Ensures items stay grouped together */
+                flex: 1 1 auto;
             }
             .nav-link {
                 font-size: 0.85rem;
@@ -65,7 +92,7 @@
 
         @media (max-width: 576px) {
             .nav-item {
-                flex: 1 1 auto; /* Keeps items from stretching */
+                flex: 1 1 auto;
             }
             .nav-link {
                 font-size: 0.75rem;
@@ -74,11 +101,11 @@
 
         @media (max-width: 480px) {
             .navbar {
-                padding: 5px 0; /* Reduced padding on navbar */
+                padding: 5px 0;
             }
             .nav-link {
                 display: block;
-                padding: 2px; /* Further reduced padding for links */
+                padding: 2px;
                 font-size: 0.7rem;
             }
         }
@@ -94,7 +121,7 @@
 
         @media (max-width: 375px) {
             .navbar {
-                padding: 5px; /* Further reduced padding */
+                padding: 5px;
             }
         }
 
@@ -103,57 +130,12 @@
                 font-size: 1rem;
             }
             .nav-item img {
-                width: 18px; /* Further reduced icon size */
-                height: 18px; /* Further reduced icon size */
+                width: 18px;
+                height: 18px;
             }
             .nav-link {
-                padding: 1px; /* Further reduced padding for links */
+                padding: 1px;
                 font-size: 0.6rem;
-            }
-        }
-
-        @media (max-width: 1600px) {
-            .navbar {
-                background-color: #f8f9fa;
-            }
-        }
-
-        @media (max-width: 1400px) {
-            .nav-item img {
-                width: 22px; /* Adjusted icon size */
-                height: 22px; /* Adjusted icon size */
-            }
-        }
-
-        @media (max-width: 1280px) {
-            .navbar {
-                border-bottom: 1px solid #ccc;
-            }
-        }
-
-        @media (max-width: 1024px) {
-            .container {
-                margin-top: 15px;
-            }
-        }
-
-        @media (max-width: 900px) {
-            .nav-link {
-                padding: 5px 0; /* Further reduced padding */
-            }
-        }
-
-        @media (max-width: 800px) {
-            .navbar {
-                flex-direction: row; /* Maintain horizontal layout */
-                justify-content: flex-start; /* Align items to the left */
-                padding: 0; /* Remove padding for compactness */
-            }
-        }
-
-        @media (max-width: 700px) {
-            .nav-link {
-                font-size: 0.8rem;
             }
         }
     </style>
@@ -161,10 +143,10 @@
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark"> <!-- Updated to 'navbar-dark' for better contrast with dark background -->
     <a class="navbar-brand" href="{{ url_for('dashboard') if current_user.is_authenticated else url_for('home') }}">Financy</a>
     <div class="navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav flex-row w-100 justify-content-start"> <!-- Updated to 'justify-content-start' -->
+        <ul class="navbar-nav flex-row w-100 justify-content-start">
             {% if current_user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('overview') }}">

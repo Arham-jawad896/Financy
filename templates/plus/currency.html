@@ -1,0 +1,172 @@
+{% extends "dashboard.html" %}
+
+{% block page_content %}
+<h1 style="color: #C5C6C7;">Currency Converter</h1>
+<form id="converter-form" style="color: #C5C6C7;">
+    <label for="amount">Amount:</label>
+    <input type="number" id="amount" name="amount" required class="styled-input">
+
+    <label for="from-currency">From:</label>
+    <select id="from-currency" name="from" class="styled-select">
+        {% for currency in currencies %}
+        <option value="{{ currency }}">{{ currency }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="to-currency">To:</label>
+    <select id="to-currency" name="to" class="styled-select">
+        {% for currency in currencies %}
+        <option value="{{ currency }}">{{ currency }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" class="styled-button">Convert</button>
+</form>
+
+<div id="result" class="result-box" style="display: none;"></div>
+
+<script>
+    document.getElementById('converter-form').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const amount = document.getElementById('amount').value;
+        const from = document.getElementById('from-currency').value;
+        const to = document.getElementById('to-currency').value;
+
+        try {
+            const response = await fetch(`/api/convert?amount=${amount}&from=${from}&to=${to}`);
+
+            if (!response.ok) {
+                const errorResult = await response.json();
+                document.getElementById('result').innerText = errorResult.error || "An error occurred.";
+                document.getElementById('result').style.display = 'block';
+                return;
+            }
+
+            const result = await response.json();
+            const resultText = `${amount} ${from} = <span class="converted-amount">${result.converted_amount.toFixed(2)} ${to}</span>`;
+            document.getElementById('result').innerHTML = resultText;
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('result').style.opacity = 1; // Fade in result
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('result').innerText = "An error occurred during the request.";
+            document.getElementById('result').style.display = 'block';
+        }
+    });
+</script>
+
+<style>
+    /* Additional styles for animations and transitions */
+    h1 {
+        animation: fadeIn 1s ease;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        animation: slideIn 0.5s ease-in-out;
+    }
+
+    label {
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
+
+    label:hover {
+        color: #66FCF1; /* Change label color on hover */
+    }
+
+    .styled-input, .styled-select {
+        background-color: #1F2833;
+        color: #C5C6C7;
+        border: 2px solid #66FCF1;
+        border-radius: 5px;
+        padding: 10px;
+        font-size: 16px;
+        transition: border 0.3s ease, box-shadow 0.3s ease;
+        outline: none;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .styled-select {
+        cursor: pointer;
+    }
+
+    .styled-button {
+        background-color: #45A29E;
+        color: white;
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+        cursor: pointer;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .styled-button:hover {
+        background-color: #66FCF1;
+        transform: scale(1.05);
+    }
+
+    /* Result box styles */
+    .result-box {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #1F2833;
+        border: 2px solid #66FCF1;
+        border-radius: 8px;
+        animation: fadeIn 0.5s ease;
+        box-shadow: 0 0 10px rgba(102, 207, 241, 0.7);
+        transition: transform 0.3s ease;
+        opacity: 0; /* Initially hidden */
+    }
+
+    .result-box.show {
+        display: block;
+        opacity: 1; /* Fade in effect */
+    }
+
+    .converted-amount {
+        font-size: 24px;
+        font-weight: bold;
+        color: #66FCF1;
+        text-shadow: 0 0 5px rgba(102, 207, 241, 0.8);
+        animation: bounce 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-10px);
+        }
+        60% {
+            transform: translateY(-5px);
+        }
+    }
+</style>
+{% endblock %}

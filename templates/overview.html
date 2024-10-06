@@ -1,13 +1,78 @@
 {% extends 'dashboard.html' %}
 
 {% block page_content %}
+<style>
+    body {
+        background-color: #0B0C10; /* Rich Black */
+    }
+
+    h1 {
+        color: #C5C6C7; /* Platinum */
+    }
+
+    .card-container {
+        display: grid; /* Use CSS Grid */
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive columns */
+        gap: 1rem; /* Space between cards */
+    }
+
+    .card {
+        background-color: #1F2833; /* Gunmetal */
+        color: #C5C6C7; /* Platinum */
+        border: 1px solid #66FCF1; /* Electric Blue */
+        transition: transform 0.2s; /* Scale effect on hover */
+    }
+
+    .card-header {
+        color: #C5C6C7; /* Platinum */
+    }
+
+    .card-header.bg-primary {
+        background-color: #66FCF1; /* Electric Blue */
+    }
+
+    .card-header.bg-success {
+        background-color: #45A29E; /* Neon Green */
+    }
+
+    .card-header.bg-info {
+        background-color: #4E5D6C; /* Deep Space Sparkle */
+    }
+
+    .card-header.bg-warning {
+        background-color: #FFD700; /* Use a gold shade for warning */
+    }
+
+    .card:hover {
+        transform: scale(1.05); /* Scale up on hover */
+    }
+
+    .btn-secondary {
+        background-color: #66FCF1; /* Electric Blue */
+        color: #0B0C10; /* Rich Black */
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .btn-secondary:hover {
+        background-color: #45A29E; /* Neon Green */
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 576px) {
+        .card-container {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Smaller columns on small screens */
+        }
+    }
+
+</style>
+
 <div class="container mt-4">
     <h1 class="mb-4 text-center">User Overview</h1>
 
-    <div class="card-container"> <!-- New container for cards -->
+    <div class="card-container">
         <!-- Personal Information Card -->
         <div class="card shadow-sm border-light animate__animated animate__fadeIn">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header bg-primary">
                 <h5 class="mb-0">Personal Information</h5>
             </div>
             <div class="card-body">
@@ -22,7 +87,7 @@
 
         <!-- Financial Information Card -->
         <div class="card shadow-sm border-light animate__animated animate__fadeIn">
-            <div class="card-header bg-success text-white">
+            <div class="card-header bg-success">
                 <h5 class="mb-0">Financial Information</h5>
             </div>
             <div class="card-body">
@@ -34,7 +99,7 @@
 
         <!-- Goals & Preferences Card -->
         <div class="card shadow-sm border-light animate__animated animate__fadeIn">
-            <div class="card-header bg-info text-white">
+            <div class="card-header bg-info">
                 <h5 class="mb-0">Goals & Preferences</h5>
             </div>
             <div class="card-body">
@@ -47,7 +112,7 @@
 
         <!-- Investments Card -->
         <div class="card shadow-sm border-light animate__animated animate__fadeIn">
-            <div class="card-header bg-warning text-white">
+            <div class="card-header bg-warning">
                 <h5 class="mb-0">Investments</h5>
             </div>
             <div class="card-body">
@@ -74,27 +139,5 @@
 
 <!-- Include Animate.css for animation effects -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-
-<style>
-    .card-container {
-        display: grid; /* Use CSS Grid */
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive columns */
-        gap: 1rem; /* Space between cards */
-    }
-
-    .card {
-        transition: transform 0.2s; /* Scale effect on hover */
-    }
-
-    .card:hover {
-        transform: scale(1.05); /* Scale up on hover */
-    }
-
-    @media (max-width: 576px) {
-        .card-container {
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Smaller columns on small screens */
-        }
-    }
-</style>
 
 {% endblock %}

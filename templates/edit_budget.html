@@ -2,12 +2,12 @@
 
 {% block page_content %}
 <div class="container mt-4">
-    <h1 class="mb-4 text-center">Edit Budget</h1>
+    <h1 class="mb-4 text-center text-white">Edit Budget</h1>
 
     <div class="row">
         <!-- Edit Budget Form Card -->
         <div class="col-md-6 mb-4 mx-auto">
-            <div class="card shadow-sm border-light animate__animated animate__fadeIn">
+            <div class="card shadow-sm border-light animate__animated animate__fadeIn budget-card">
                 <div class="card-header bg-warning text-white">
                     <h5 class="mb-0">Edit Your Budget</h5>
                 </div>
@@ -55,11 +55,76 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
 <style>
-    .card {
-        transition: transform 0.2s; /* Scale effect on hover */
+    /* Main body gradient background */
+    body {
+        background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+        color: white;
     }
+
+    .card {
+        transition: transform 0.2s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.1); /* Transparent background for a modern look */
+    }
+
     .card:hover {
         transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* Box shadow effect */
+    }
+
+    /* Form input styling */
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.8);
+        border: none;
+        color: #000;
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        border-color: #007bff;
+    }
+
+    /* Buttons styling */
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+    .card-header {
+        border-bottom: 0;
+        background-color: #ffc107;
+        color: black;
+    }
+
+    /* Responsive card hover effects */
+    @media (max-width: 768px) {
+        .card:hover {
+            transform: scale(1.02);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .card:hover {
+            transform: scale(1.01);
+        }
+
+        .btn {
+            font-size: 0.9rem;
+        }
     }
 </style>
 

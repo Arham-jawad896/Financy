@@ -2,18 +2,18 @@
 
 {% block page_content %}
 <div class="container mt-5">
-    <h2 class="text-center">Budgets</h2>
+    <h2 class="text-center text-white">Budgets</h2>
     <div class="mt-4">
         <div class="row">
             {% for budget in budgets %}
             <div class="col-12 col-md-6 col-lg-4 mb-3"> <!-- Responsive card layout -->
-                <div class="card">
+                <div class="card budget-card">
                     <div class="card-body">
-                        <h5 class="card-title">{{ budget.category }}</h5>
-                        <p class="card-text"><strong>Amount:</strong> ${{ budget.amount }}</p>
-                        <p class="card-text"><strong>Date:</strong> {{ budget.date }}</p>
-                        <p class="card-text"><strong>Budget Type:</strong> {{ budget.budget_type }}</p>
-                        <p class="card-text"><strong>Description:</strong> {{ budget.description }}</p>
+                        <h5 class="card-title text-white">{{ budget.category }}</h5>
+                        <p class="card-text text-white"><strong>Amount:</strong> ${{ budget.amount }}</p>
+                        <p class="card-text text-white"><strong>Date:</strong> {{ budget.date }}</p>
+                        <p class="card-text text-white"><strong>Budget Type:</strong> {{ budget.budget_type }}</p>
+                        <p class="card-text text-white"><strong>Description:</strong> {{ budget.description }}</p>
                         <a href="{{ url_for('edit_budget', budget_id=budget.id) }}" class="btn btn-warning btn-sm">Edit</a>
                         <a href="{{ url_for('delete_budget', budget_id=budget.id) }}" class="btn btn-danger btn-sm">Delete</a>
                     </div>
@@ -26,4 +26,86 @@
         <a href="{{ url_for('add_budget') }}" class="btn btn-primary">Add New Budget</a>
     </div>
 </div>
+
+<style>
+    /* Main theme gradient background */
+    body {
+        background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+        color: white;
+    }
+
+    /* Budget card styling */
+    .budget-card {
+        background: rgba(255, 255, 255, 0.1); /* Semi-transparent card */
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .budget-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Card text color */
+    .card-text {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .card-title {
+        color: #fff;
+        font-size: 1.5rem;
+    }
+
+    /* Button styling */
+    .btn-warning {
+        background-color: #ffc107;
+        border: none;
+        color: #000;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border: none;
+        color: #fff;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #0069d9;
+    }
+
+    /* Media queries for responsive layout */
+    @media (max-width: 768px) {
+        .card-title {
+            font-size: 1.2rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .card-title {
+            font-size: 1rem;
+        }
+
+        .btn {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
 {% endblock %}

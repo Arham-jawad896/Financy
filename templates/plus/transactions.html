@@ -1,0 +1,190 @@
+{% extends 'dashboard.html' %}
+
+{% block page_content %}
+<head>
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            font-family: 'Roboto', sans-serif;
+            background-color: #0B0C10;
+            color: white;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .transaction-form {
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto 20px auto;
+            background-color: #2C3034;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .transaction-form input,
+        .transaction-form select,
+        .transaction-form button {
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #1F2833;
+            color: white;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .transaction-form input:focus,
+        .transaction-form select:focus {
+            outline: none;
+            background-color: #3A3D40;
+            transform: scale(1.02);
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        .transaction-form button {
+            background-color: #45A29E;
+            cursor: pointer;
+        }
+
+        .transaction-form button:hover {
+            background-color: #66FCF1;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(102, 252, 241, 0.6);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .transaction-table {
+            width: 90%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            margin-top: 20px;
+            animation: fadeInUp 0.5s ease-in-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .transaction-table th,
+        .transaction-table td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #444;
+            transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease;
+        }
+
+        .transaction-table th {
+            background-color: #45A29E;
+            color: white;
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+
+        .transaction-table th:hover {
+            transform: translateY(-8px);
+            color: #000;
+        }
+
+        .transaction-table tr:nth-child(even) {
+            background-color: #1F2833;
+        }
+
+        .transaction-table tr:hover {
+            background-color: #66FCF1;
+            color: black;
+            transition: background-color 0.3s ease;
+        }
+
+        .transaction-table td {
+            transition: color 0.3s ease;
+        }
+
+        .transaction-table td:hover {
+            color: #000;
+            text-shadow: 0 0 5px #66FCF1;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Transactions</h1>
+
+<form action="{{ url_for('transactions') }}" class="transaction-form" method="POST">
+    <select name="transaction_type" required>
+        <option disabled selected value="">Select Transaction Type</option>
+        <option value="Income">Income</option>
+        <option value="Expense">Expense</option>
+    </select>
+    <input name="amount" placeholder="Transaction Amount" required step="0.01" type="number">
+    <input name="description" placeholder="Description" required type="text">
+    <input name="date" required type="date">
+    <button type="submit">Add Transaction</button>
+</form>
+
+<table class="transaction-table">
+    <thead>
+    <tr>
+        <th>Transaction Type</th>
+        <th>Transaction Amount</th>
+        <th>Transaction Date</th>
+        <th>Description</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for transaction in transactions %}
+    <tr>
+        <td>{{ transaction.transaction_type }}</td>
+        <td>${{ transaction.amount }}</td>
+        <td>{{ transaction.date }}</td>
+        <td>{{ transaction.description }}</td>
+        <td>
+            <a href="{{ url_for('edit_transaction', transaction_id=transaction.id) }}" style="color: #45A29E;">Edit</a>
+            <form action="{{ url_for('delete_transaction', transaction_id=transaction.id) }}" method="POST" style="display:inline;">
+                <button type="submit" style="background:none; border:none; color:#E24E4E; cursor:pointer;">Delete</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+{% endblock %}

@@ -2,126 +2,126 @@
 
 {% block page_content %}
 <div class="container mt-4">
-    <h1 class="mb-4 text-center">Edit Your Information</h1>
+    <h1 class="mb-4 text-center text-white">Edit Your Information</h1>
 
     <form method="POST">
-        <h4>Personal Information</h4>
+        <h4 class="text-white">Personal Information</h4>
         <div class="form-group">
-            <label for="full_name">Full Name</label>
+            <label for="full_name" class="text-white">Full Name</label>
             <input type="text" class="form-control" id="full_name" name="full_name" value="{{ user_info.full_name }}" required>
         </div>
         <div class="form-group">
-            <label for="email">Email</label>
+            <label for="email" class="text-white">Email</label>
             <input type="email" class="form-control" id="email" name="email" value="{{ user_info.email }}" required>
         </div>
         <div class="form-group">
-            <label for="phone">Phone</label>
+            <label for="phone" class="text-white">Phone</label>
             <input type="text" class="form-control" id="phone" name="phone" value="{{ user_info.phone }}">
         </div>
         <div class="form-group">
-            <label for="address">Address</label>
+            <label for="address" class="text-white">Address</label>
             <input type="text" class="form-control" id="address" name="address" value="{{ user_info.address }}">
         </div>
         <div class="form-group">
-            <label for="city">City</label>
+            <label for="city" class="text-white">City</label>
             <input type="text" class="form-control" id="city" name="city" value="{{ user_info.city }}">
         </div>
         <div class="form-group">
-            <label for="state">State</label>
+            <label for="state" class="text-white">State</label>
             <input type="text" class="form-control" id="state" name="state" value="{{ user_info.state }}">
         </div>
         <div class="form-group">
-            <label for="zip">ZIP Code</label>
+            <label for="zip" class="text-white">ZIP Code</label>
             <input type="text" class="form-control" id="zip" name="zip" value="{{ user_info.zip }}">
         </div>
         <div class="form-group">
-            <label for="job_title">Job Title</label>
+            <label for="job_title" class="text-white">Job Title</label>
             <input type="text" class="form-control" id="job_title" name="job_title" value="{{ user_info.job_title }}">
         </div>
         <div class="form-group">
-            <label for="employer">Employer</label>
+            <label for="employer" class="text-white">Employer</label>
             <input type="text" class="form-control" id="employer" name="employer" value="{{ user_info.employer }}">
         </div>
 
-        <h4 class="mt-4">Financial Information</h4>
+        <h4 class="mt-4 text-white">Financial Information</h4>
         <div class="form-group">
-            <label for="income">Income</label>
+            <label for="income" class="text-white">Income</label>
             <input type="number" step="0.01" class="form-control" id="income" name="income" value="{{ user_info.income }}">
         </div>
         <div class="form-group">
-            <label for="expenses">Expenses</label>
+            <label for="expenses" class="text-white">Expenses</label>
             <input type="number" step="0.01" class="form-control" id="expenses" name="expenses" value="{{ user_info.expenses }}">
         </div>
         <div class="form-group">
-            <label for="dependents">Dependents</label>
+            <label for="dependents" class="text-white">Dependents</label>
             <input type="number" class="form-control" id="dependents" name="dependents" value="{{ user_info.dependents }}">
         </div>
 
-        <h4 class="mt-4">Goals & Preferences</h4>
+        <h4 class="mt-4 text-white">Goals & Preferences</h4>
         <div class="form-group">
-            <label for="savings_goals">Savings Goals</label>
+            <label for="savings_goals" class="text-white">Savings Goals</label>
             <input type="text" class="form-control" id="savings_goals" name="savings_goals" value="{{ user_info.savings_goals }}">
         </div>
         <div class="form-group">
-            <label for="financial_goals">Financial Goals</label>
+            <label for="financial_goals" class="text-white">Financial Goals</label>
             <input type="text" class="form-control" id="financial_goals" name="financial_goals" value="{{ user_info.financial_goals }}">
         </div>
         <div class="form-group">
-            <label for="investment_preferences">Investment Preferences</label>
+            <label for="investment_preferences" class="text-white">Investment Preferences</label>
             <input type="text" class="form-control" id="investment_preferences" name="investment_preferences" value="{{ user_info.investment_preferences }}">
         </div>
         <div class="form-group">
-            <label for="notes">Notes</label>
+            <label for="notes" class="text-white">Notes</label>
             <textarea class="form-control" id="notes" name="notes">{{ user_info.notes }}</textarea>
         </div>
 
-        <h4 class="mt-4">Investments & Expenses</h4>
+        <h4 class="mt-4 text-white">Investments & Expenses</h4>
         <div class="form-group">
-            <label for="investments">Investments</label>
+            <label for="investments" class="text-white">Investments</label>
             <input type="number" step="0.01" class="form-control" id="investments" name="investments" value="{{ user_info.investments }}">
         </div>
         <div class="form-group">
-            <label for="emergency_fund">Emergency Fund</label>
+            <label for="emergency_fund" class="text-white">Emergency Fund</label>
             <input type="number" step="0.01" class="form-control" id="emergency_fund" name="emergency_fund" value="{{ user_info.emergency_fund }}">
         </div>
         <div class="form-group">
-            <label for="vacation">Vacation</label>
+            <label for="vacation" class="text-white">Vacation</label>
             <input type="number" step="0.01" class="form-control" id="vacation" name="vacation" value="{{ user_info.vacation }}">
         </div>
         <div class="form-group">
-            <label for="rent">Rent</label>
+            <label for="rent" class="text-white">Rent</label>
             <input type="number" step="0.01" class="form-control" id="rent" name="rent" value="{{ user_info.rent }}">
         </div>
         <div class="form-group">
-            <label for="utilities">Utilities</label>
+            <label for="utilities" class="text-white">Utilities</label>
             <input type="number" step="0.01" class="form-control" id="utilities" name="utilities" value="{{ user_info.utilities }}">
         </div>
         <div class="form-group">
-            <label for="groceries">Groceries</label>
+            <label for="groceries" class="text-white">Groceries</label>
             <input type="number" step="0.01" class="form-control" id="groceries" name="groceries" value="{{ user_info.groceries }}">
         </div>
         <div class="form-group">
-            <label for="transport">Transport</label>
+            <label for="transport" class="text-white">Transport</label>
             <input type="number" step="0.01" class="form-control" id="transport" name="transport" value="{{ user_info.transport }}">
         </div>
         <div class="form-group">
-            <label for="entertainment">Entertainment</label>
+            <label for="entertainment" class="text-white">Entertainment</label>
             <input type="number" step="0.01" class="form-control" id="entertainment" name="entertainment" value="{{ user_info.entertainment }}">
         </div>
         <div class="form-group">
-            <label for="stocks">Stocks</label>
+            <label for="stocks" class="text-white">Stocks</label>
             <input type="number" step="0.01" class="form-control" id="stocks" name="stocks" value="{{ user_info.stocks }}">
         </div>
         <div class="form-group">
-            <label for="bonds">Bonds</label>
+            <label for="bonds" class="text-white">Bonds</label>
             <input type="number" step="0.01" class="form-control" id="bonds" name="bonds" value="{{ user_info.bonds }}">
         </div>
         <div class="form-group">
-            <label for="real_estate">Real Estate</label>
+            <label for="real_estate" class="text-white">Real Estate</label>
             <input type="number" step="0.01" class="form-control" id="real_estate" name="real_estate" value="{{ user_info.real_estate }}">
         </div>
         <div class="form-group">
-            <label for="balance">Balance</label>
+            <label for="balance" class="text-white">Balance</label>
             <input type="number" step="0.01" class="form-control" id="balance" name="balance" value="{{ user_info.balance }}">
         </div>
 
@@ -131,17 +131,18 @@
 
 <style>
     .container {
-        background-color: rgba(255, 255, 255, 0.95);
+        background-color: rgba(30, 30, 30, 0.95);
         padding: 30px;
         border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
     h4 {
-        color: #343a40;
+        color: #ffffff;
         margin-top: 20px;
     }
     .form-group label {
         font-weight: bold;
+        color: #ffffff;
     }
     .btn-primary {
         background-color: #007bff;
@@ -152,5 +153,4 @@
         background-color: #0056b3;
     }
 </style>
-
 {% endblock %}

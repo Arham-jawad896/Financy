@@ -1,19 +1,205 @@
-<!doctype html>
-<html lang="en" data-bs-theme="auto">
+{% extends 'base.html' %}
+
+{% block content %}
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="description" content="Manage your personal finances easily with our budget tracking, investment overview, and debt tracking services.">
-    <title>Home</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="hero.css">
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            font-family: 'Roboto', sans-serif; /* Modern, techy font */
+            background-color: #0B0C10; /* Rich Black */
+            color: white;
+        }
+
+        #wrapper {
+            height: 100vh;
+            transition: all 0.5s ease;
+        }
+
+        #sidebar-wrapper {
+            min-height: calc(100vh - 56px);
+            width: 80px;
+            position: fixed;
+            left: 0;
+            top: 100px;
+            transition: all 0.5s ease;
+            background-color: #1F2833; /* Gunmetal */
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        #sidebar-heading {
+            display: flex;
+            justify-content: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .sidebar-decorator {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #45A29E; /* Neon Green */
+            animation: pulse 1.5s infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        #page-content-wrapper {
+            transition: margin-left 0.5s ease;
+            padding: 20px;
+            width: 100%;
+            margin-left: 80px;
+            background-color: #1F2833; /* Gunmetal */
+            color: #C5C6C7; /* Platinum */
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Enhanced Dark-Themed Pricing Card Styles */
+        .pricing-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 40px 0;
+        }
+
+        .pricing-card {
+            background-color: #000000; /* Changed to black */
+            color: #FFFFFF; /* Changed text color to white for better contrast */
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            margin: 15px;
+            text-align: center;
+            flex: 1 1 calc(33% - 30px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .pricing-card h2 {
+            color: #66FCF1; /* Electric Blue */
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .pricing-card p {
+            color: #FFFFFF; /* White text */
+            font-size: 1.2em;
+            margin: 15px 0;
+        }
+
+        .pricing-card .price {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #FFFFFF; /* Cyber Yellow */
+            margin: 20px 0;
+        }
+
+        .pricing-card .features {
+            list-style-type: none;
+            padding: 0;
+            color: #FFFFFF; /* White text */
+            margin: 10px 0;
+        }
+
+        .pricing-card .features li {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .pricing-card .features li::before {
+            content: "✔️"; /* Checkmark */
+            color: #FFFFFF; /* Electric Blue */
+            margin-right: 10px;
+        }
+
+        .pricing-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .pricing-card {
+                flex: 1 1 calc(50% - 30px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pricing-card {
+                flex: 1 1 100%;
+            }
+
+            #sidebar-wrapper {
+                width: 60px;
+            }
+        }
+        #container {
+            color: white;
+        }
+        .currency-select {
+    appearance: none; /* Remove default styling */
+    -webkit-appearance: none; /* Remove default styling in Safari */
+    -moz-appearance: none; /* Remove default styling in Firefox */
+    width: 100%;
+    padding: 0.5rem 2rem 0.5rem 1rem; /* Padding with extra space for the arrow */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 4px; /* Rounded corners */
+    background-color: #fff; /* White background */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="%23000" stroke-width="1.5"><polyline points="4 6 8 10 12 6" /></svg>'); /* Arrow down icon */
+    background-repeat: no-repeat; /* Prevent repeating */
+    background-position: right 1rem center; /* Position the icon */
+    background-size: 1rem; /* Size of the icon */
+    font-size: 1rem; /* Font size */
+    transition: border-color 0.3s ease; /* Smooth border color change on focus */
+}
+
+.currency-select:focus {
+    border-color: #007bff; /* Highlight border on focus */
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Subtle shadow for focus effect */
+}
+
+.currency-select option {
+    padding: 10px; /* Add padding to options for better usability */
+}
+
+    </style>
 </head>
 <body>
-    {% extends "base.html" %}
-
-    {% block content %}
     <!-- Hero Section -->
     <div class="hero">
         <div class="hero-overlay"></div>
@@ -24,11 +210,12 @@
                         <img src="{{ url_for('static', filename='icons/hero.png') }}" class="d-block mx-lg-auto img-fluid" alt="Placeholder Image" width="700" height="500" loading="lazy">
                     </div>
                     <div class="col-lg-6">
-                        <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Responsive left-aligned hero with image</h1>
+                        <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Manage Your Finances</h1>
                         <p class="lead">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit.</p>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
                             <a href="{{ url_for('login') }}">
-                                <button type="button" class="btn btn-primary btn-lg px-4 me-md-2" aria-label="Login">Login</button>
+
+                                <button type="button" class="btn btn-primary btn-lg px-4 me-md-2 mr-2" aria-label="Login">Login</button>
                             </a>
                             <a href="{{ url_for('register') }}">
                                 <button type="button" class="btn btn-outline-secondary btn-lg px-4" aria-label="Signup">Signup</button>
@@ -42,24 +229,24 @@
 
     <!-- Featured Section -->
     <div class="container px-4 py-5" id="featured-3">
-        <h2 class="pb-2 border-bottom">Services</h2>
+        <h2 class="pb-2 border-bottom text-body-emphasis" style="color: #fffff">Our Services</h2>
         <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
             <div class="feature col">
-                <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
+                <div class="feature-icon">
                     <img src="{{ url_for('static', filename='icons/budget.png') }}" alt="Budget Tracking Icon" width="60" height="60">
                 </div>
-                <h3 class="fs-2 text-body-emphasis">Budget Tracking</h3>
-                <p>Keep track of your budget and expenses effortlessly. Categorize your spending and see where your money goes.</p>
+                <h3 class="fs-2 text-body-emphasis" style="color: white;">Budget Tracking</h3>
+                <p style="color: white;">Keep track of your budget and expenses effortlessly. Categorize your spending and see where your money goes.</p>
             </div>
             <div class="feature col">
-                <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
+                <div class="feature-icon">
                     <img src="{{ url_for('static', filename='icons/stock.png') }}" alt="Investment Overview" width="60" height="60">
                 </div>
                 <h3 class="fs-2 text-body-emphasis">Investment Overview</h3>
                 <p>Get a clear summary of your investments, including their current value and performance over time.</p>
             </div>
             <div class="feature col">
-                <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
+                <div class="feature-icon">
                     <img src="{{ url_for('static', filename='icons/debt.png') }}" alt="Debt Tracking" width="60" height="60">
                 </div>
                 <h3 class="fs-2 text-body-emphasis">Debt Tracking</h3>
@@ -68,86 +255,38 @@
         </div>
     </div>
 
-    <!-- Pricing Section -->
-    <div class="container px-4 py-5" id="pricing">
-        <h2 class="pb-2 border-bottom">Pricing</h2>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            <!-- Free Plan Card -->
-            <div class="col">
-                <div class="card border-primary">
-                    <div class="card-header">Free Plan</div>
-                    <div class="card-body">
-                        <h5 class="card-title">Free</h5>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Budget Tracking:</strong> Basic</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Expense Categorization:</strong> Limited Categories</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Debt Tracking:</strong> Basic</li>
-                            <li class="list-group-item"><i class="bi bi-x-circle"></i> <strong>Investment Overview:</strong> Not Included</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Financial Reports:</strong> Basic Reports</li>
-                            <li class="list-group-item"><i class="bi bi-x-circle"></i> <strong>Custom Budget Alerts:</strong> Not Included</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Multi-Account Support:</strong> Single Account</li>
-                            <li class="list-group-item"><i class="bi bi-x-circle"></i> <strong>Priority Customer Support:</strong> Not Included</li>
-                            <li class="list-group-item"><i class="bi bi-x-circle"></i> <strong>Data Export (CSV, Excel):</strong> Not Included</li>
-                            <li class="list-group-item"><i class="bi bi-x-circle"></i> <strong>Ad-Free Experience:</strong> No</li>
-                        </ul>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn btn-primary">Choose Plan</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Pro Plan Card -->
-            <div class="col">
-                <div class="card border-primary">
-                    <div class="card-header">Pro Plan</div>
-                    <div class="card-body">
-                        <h5 class="card-title">$10/month</h5>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Budget Tracking:</strong> Advanced</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Expense Categorization:</strong> Unlimited Categories</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Debt Tracking:</strong> Advanced</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Investment Overview:</strong> Included</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Financial Reports:</strong> Detailed Reports</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Custom Budget Alerts:</strong> Included</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Multi-Account Support:</strong> Up to 3 Accounts</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Priority Customer Support:</strong> Standard Support</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Data Export (CSV, Excel):</strong> Included</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Ad-Free Experience:</strong> Yes</li>
-                        </ul>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn btn-primary">Choose Plan</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Premium Plan Card -->
-            <div class="col">
-                <div class="card border-primary">
-                    <div class="card-header">Premium Plan</div>
-                    <div class="card-body">
-                        <h5 class="card-title">$25/month</h5>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Budget Tracking:</strong> Premium</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Expense Categorization:</strong> Unlimited Categories</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Debt Tracking:</strong> Premium</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Investment Overview:</strong> Included</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Financial Reports:</strong> Comprehensive Reports</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Custom Budget Alerts:</strong> Included</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Multi-Account Support:</strong> Unlimited</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Priority Customer Support:</strong> 24/7 Support</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Data Export (CSV, Excel):</strong> Included</li>
-                            <li class="list-group-item"><i class="bi bi-check-circle"></i> <strong>Ad-Free Experience:</strong> Yes</li>
-                        </ul>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn btn-primary">Choose Plan</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endblock %}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
+<script>
+function updatePlusPrice() {
+    const select = document.getElementById('currency-plus');
+    const priceDisplay = document.getElementById('plus-price');
+    const hiddenInput = document.getElementById('currency-plus-hidden');
+
+    if (select.value === 'usd') {
+        priceDisplay.textContent = '$6/month'; // Adjust USD price accordingly
+        hiddenInput.value = 'usd';
+    } else {
+        priceDisplay.textContent = '€5/month';
+        hiddenInput.value = 'eur';
+    }
+}
+
+function updatePremiumPrice() {
+    const select = document.getElementById('currency-premium');
+    const priceDisplay = document.getElementById('premium-price');
+    const hiddenInput = document.getElementById('currency-premium-hidden');
+
+    if (select.value === 'usd') {
+        priceDisplay.textContent = '$12/month'; // Adjust USD price accordingly
+        hiddenInput.value = 'usd';
+    } else {
+        priceDisplay.textContent = '€10/month';
+        hiddenInput.value = 'eur';
+    }
+}
+</script>
+
+
+
+{% endblock %}

@@ -11,7 +11,7 @@
                     <textarea id="feedbackText" name="feedbackText" class="form-control" rows="4" required></textarea>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                    <button type="submit" class="btn btn-secondary">Submit Feedback</button>
                 </div>
             </form>
         </div>
@@ -20,20 +20,23 @@
 
 <style>
     body {
-        background-color: #f8f9fa; /* Light gray background */
+        background-color: #0B0C10; /* Rich Black */
     }
     h2 {
-        color: #343a40; /* Dark gray for headings */
+        color: #C5C6C7; /* Platinum */
     }
     .card {
-        background-color: white; /* White card background */
+        background-color: #1F2833; /* Gunmetal */
+        color: #C5C6C7; /* Platinum */
     }
-    .btn-primary {
-        background-color: #007bff; /* Bootstrap primary color */
-        border: none; /* Remove border */
+    .btn-secondary {
+        background-color: #66FCF1; /* Electric Blue */
+        color: #0B0C10; /* Rich Black */
+        transition: background-color 0.3s, transform 0.3s;
     }
-    .btn-primary:hover {
-        background-color: #0056b3; /* Darker blue on hover */
+    .btn-secondary:hover {
+        background-color: #45A29E; /* Neon Green */
+        transform: scale(1.05);
     }
 </style>
 {% endblock %}

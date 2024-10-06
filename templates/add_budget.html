@@ -1,15 +1,11 @@
 {% extends 'dashboard.html' %}
 
-
-<!-- Include any specific sidebar content if needed -->
-
-
 {% block page_content %}
 <div class="container mt-5">
-    <h2 class="text-center">Add Budget</h2>
+    <h2 class="text-center text-white">Add Budget</h2>
     <form action="{{ url_for('add_budget') }}" method="POST" class="mt-4" id="addBudgetForm">
         <div class="form-group">
-            <label for="category">Category:</label>
+            <label for="category" class="text-white">Category:</label>
             <select class="form-control" id="category" name="category" required>
                 <option value="">Select Category</option>
                 <option value="Housing">Housing</option>
@@ -31,29 +27,27 @@
                 <option value="Subscriptions">Subscriptions</option>
                 <option value="Gifts">Gifts</option>
                 <option value="Miscellaneous">Miscellaneous</option>
-                <!-- Add more options as needed -->
             </select>
         </div>
         <div class="form-group">
-            <label for="amount">Amount:</label>
+            <label for="amount" class="text-white">Amount:</label>
             <input type="number" class="form-control" id="amount" name="amount" required>
         </div>
         <div class="form-group">
-            <label for="date">Date:</label>
+            <label for="date" class="text-white">Date:</label>
             <input type="date" class="form-control" id="date" name="date" required>
         </div>
         <div class="form-group">
-            <label for="budget_type">Budget Type:</label>
+            <label for="budget_type" class="text-white">Budget Type:</label>
             <select class="form-control" id="budget_type" name="budget_type" required>
                 <option value="">Select Budget Type</option>
                 <option value="Fixed">Fixed</option>
                 <option value="Variable">Variable</option>
                 <option value="Discretionary">Discretionary</option>
-                <!-- Add more options as needed -->
             </select>
         </div>
         <div class="form-group">
-            <label for="description">Description:</label>
+            <label for="description" class="text-white">Description:</label>
             <textarea class="form-control" id="description" name="description"></textarea>
         </div>
         <button type="submit" class="btn btn-success">Submit</button>
@@ -61,36 +55,70 @@
 </div>
 
 <style>
-    /* Add some basic styles */
+    /* Main theme gradient background */
+    body {
+        background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+        color: white;
+    }
+
+    /* Form container */
     #addBudgetForm {
-        background: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.1); /* Transparent form background */
         padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
         transition: transform 0.3s, box-shadow 0.3s;
     }
 
-    /* Animation on focus */
+    /* Form focus effect */
     .form-group input:focus,
     .form-group select:focus,
     .form-group textarea:focus {
         border-color: #28a745;
-        box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.7);
     }
 
     /* Form hover effect */
     #addBudgetForm:hover {
-        transform: scale(1.02);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        transform: scale(1.03);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
     }
 
-    /* Button animation */
-    .btn {
-        transition: background-color 0.3s;
+    /* Button styling */
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        transition: background-color 0.3s ease-in-out;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
     }
 
-    .btn:hover {
+    .btn-success:hover {
         background-color: #218838;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Responsive design for mobile */
+    @media (max-width: 768px) {
+        #addBudgetForm {
+            padding: 15px;
+        }
+
+        .btn-success {
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        .btn-success {
+            font-size: 0.9rem;
+        }
     }
 </style>
 
