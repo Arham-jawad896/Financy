@@ -1,5 +1,4 @@
 import logging
-
 import requests
 from flask import Flask, request, render_template, url_for, redirect, session, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -10,7 +9,7 @@ import os
 import stripe
 import http.client
 import json
-
+from groq import Groq
 
 app = Flask(__name__)
 app.secret_key = "arham"
@@ -19,11 +18,13 @@ basedir = os.path.abspath(os.path.dirname(__file__))  # Get the current director
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "user.db")}'  # This will create user.db in the root directory
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
-stripe.api_key = 'sk_test_51Q69GpRvsBQNtu67JJKHWWIe3aev6O3KA76OHi8C6tfdPWiA3QBFnmfWZhxLowtOUJj0DVqpWxXLWf8YTK1HXkEr00KOyS1gK8'
-app.config['STRIPE_PUBLIC_KEY'] = 'pk_test_51Q69GpRvsBQNtu670asqWTEMyyigz4rnVPBftBBZcRpbWtn2qF5hfWsh3oveWg54H0Xa4HvopFXoXt2IX9xZuspM00dK7LzUw3'
+stripe.api_key = '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'
+app.config['STRIPE_PUBLIC_KEY'] = 'pk_live_51Q69GpRvsBQNtu67AcVg7TixjSokaRGFiDIU0DGOmRq1Y1sJtwkIPjQngN9pQV1h8bXzDbJy8WmBAHC6lnns96FX00kVUqJp1G'
 YOUR_DOMAIN = 'http://127.0.0.1:5000/'
 API_KEY = 'e4b6b5fa33b50de0fbfb98d8'
+FINNHUB_API_KEY = "cs2isnhr01qk1hurlve0cs2isnhr01qk1hurlveg"
 BASE_URL = 'https://api.exchangerate-api.com/v4/latest/'
+client = Groq(api_key='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')
 
 bcrypt = Bcrypt(app)
 login_manager = LoginManager()
@@ -98,6 +99,19 @@ class Transaction(db.Model):
     date = db.Column(db.Date, nullable=False)
     user = db.relationship('User', backref='transactions')
 
+class Debt(db.Model):
+    __tablename__ = 'debts'  # Ensure table name is plural
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    creditor_name = db.Column(db.String(100), nullable=False)
+    debt_amount = db.Column(db.Float, nullable=False)
+    remaining_balance = db.Column(db.Float, nullable=False)
+    due_date = db.Column(db.Date, nullable=False)
+    interest_rate = db.Column(db.Float, nullable=True)  # Optional
+    is_paid = db.Column(db.Boolean, default=False)
+
+    # Relationship with User (if needed)
+    user = db.relationship('User', backref='debts')
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -185,9 +199,9 @@ def dashboard():
     subscription_plan = current_user.subscription_plan  # Assuming 'subscription_plan' is a field in your User model
 
     if subscription_plan == 'plus':
-        return redirect(url_for('plus_page'))  # Redirect to Plus page
+        return redirect(url_for('overview'))  # Redirect to Plus page
     elif subscription_plan == 'premium':
-        return redirect(url_for('premium_page'))  # Redirect to Premium page
+        return redirect(url_for('overview'))  # Redirect to Premium page
 
     return render_template('overview.html',
                            information_filled=information_filled)  # Render the overview for free plan users
@@ -589,6 +603,124 @@ def currency_converter():
         return render_template('plus/currency.html', currencies=currencies)
     else:
         return "Error retrieving currencies", response.status_code
+
+@app.route('/debts', methods=['GET', 'POST'])
+def manage_debts():
+    if request.method == 'POST':
+        # Collect form data to create a new debt
+        creditor_name = request.form['creditor_name']
+        debt_amount = float(request.form['debt_amount'])
+        due_date = datetime.strptime(request.form['due_date'], '%Y-%m-%d')
+
+        # Get interest_rate and set default to 0.0 if empty or not provided
+        interest_rate = request.form.get('interest_rate', '')
+        user_id = request.form['user_id']  # Assuming you're tracking users
+
+        # Convert interest_rate to float, defaulting to 0.0 if empty
+        if interest_rate.strip() == '':  # Check if the interest_rate is empty
+            interest_rate = 0.0
+        else:
+            interest_rate = float(interest_rate)
+
+        # Create the new debt
+        new_debt = Debt(
+            creditor_name=creditor_name,
+            debt_amount=debt_amount,
+            remaining_balance=debt_amount,
+            due_date=due_date,
+            interest_rate=interest_rate,  # This will now be a float, defaulting to 0.0 if left blank
+            user_id=user_id  # Tie to user
+        )
+        db.session.add(new_debt)
+        db.session.commit()
+        flash('Debt successfully added', 'success')
+        return redirect(url_for('manage_debts'))
+
+    # Fetch debts: Active and Paid (Filtered by user)
+    user_id = 1  # For now, assuming a fixed user or session-based
+    debts = Debt.query.filter_by(user_id=user_id, is_paid=False).all()
+    paid_debts = Debt.query.filter_by(user_id=user_id, is_paid=True).all()
+
+    # Render template with both active and paid debts
+    return render_template('plus/debts.html', debts=debts, paid_debts=paid_debts)
+
+@app.route('/mark_debt_paid/<int:debt_id>', methods=['POST'])
+def mark_debt_paid(debt_id):
+    debt = Debt.query.get(debt_id)
+    if debt and not debt.is_paid:
+        debt.is_paid = True
+        payment_date = datetime.now()  # Get the current date and time
+        db.session.commit()
+        flash('Debt marked as paid', 'success')
+        return redirect(url_for('manage_debts', payment_date=payment_date))  # Pass payment date
+    else:
+        flash('Debt not found or already paid', 'danger')
+    return redirect(url_for('manage_debts'))
+
+@app.route('/debt_payment/<int:debt_id>', methods=['POST'])
+def make_payment(debt_id):
+    debt = Debt.query.get(debt_id)
+    if debt and not debt.is_paid:
+        payment_amount = float(request.form['payment_amount'])
+        if payment_amount > debt.remaining_balance:
+            flash('Payment exceeds remaining balance', 'danger')
+        else:
+            debt.remaining_balance -= payment_amount
+            if debt.remaining_balance == 0:
+                debt.is_paid = True  # Automatically mark paid if balance hits zero
+                debt.paid_on = datetime.now()  # Capture the payment date
+            db.session.commit()
+            flash('Payment recorded successfully', 'success')
+    else:
+        flash('Debt not found or already paid', 'danger')
+    return redirect(url_for('manage_debts'))
+
+@app.route('/delete_debt/<int:debt_id>', methods=['POST'])
+def delete_debt(debt_id):
+    debt = Debt.query.get(debt_id)  # Assuming you have a Debt model
+    if debt:
+        db.session.delete(debt)
+        db.session.commit()
+        flash('Debt deleted successfully!', 'success')
+    else:
+        flash('Debt not found!', 'danger')
+    return redirect(url_for('manage_debts'))  # Redirect to the debts page
+
+@app.route('/delete_paid_debt/<int:debt_id>', methods=['POST'])
+def delete_paid_debt(debt_id):
+    debt = Debt.query.get(debt_id)  # Assuming you have a Debt model
+    if debt and debt.is_paid:  # Ensure the debt is marked as paid
+        db.session.delete(debt)
+        db.session.commit()
+        flash('Paid debt deleted successfully!', 'success')
+    else:
+        flash('Paid debt not found or cannot be deleted!', 'danger')
+    return redirect(url_for('manage_debts'))  # Redirect to the debts page
+
+@app.route('/chatbot', methods=['GET', 'POST'])
+def chatbot():
+    if request.method == 'POST':
+        user_input = request.json.get('message')
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": user_input,
+                }
+            ],
+            model="llama-3.1-70b-versatile",
+        )
+
+        # Extract the bot's response
+        bot_response = chat_completion.choices[0].message.content
+
+        # Handle tool call separately
+        if bot_response.startswith("<tool_call>"):
+            return jsonify({"response": "I'm analyzing your sentiment."})
+
+        return jsonify({"response": bot_response})
+
+    return render_template('plus/chatbot.html')
 
 if __name__ == '__main__':
     with app.app_context():

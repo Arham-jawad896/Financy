@@ -34,15 +34,30 @@
                 <img alt="Feedback" class="icon" src="{{ url_for('static', filename='icons/report.png') }}">
                 <span class="menu-text">Feedback</span>
             </a>
-            {% if current_user.subscription_plan in ['plus'] %}
+            {% if current_user.subscription_plan in ['plus', 'premium'] %}
+            <!-- Plus Plan Features -->
             <a class="list-group-item list-group-item-action bg-dark text-light" href="{{ url_for('transactions') }}">
                 <img alt="Transactions" class="icon" src="{{ url_for('static', filename='icons/transaction.png') }}">
                 <span class="menu-text">Transactions</span>
             </a>
-            <a class="list-group-item list-group-item-action bg-dark text-light" href="{{ url_for('currency_converter') }}">
+            <a class="list-group-item list-group-item-action bg-dark text-light"
+               href="{{ url_for('currency_converter') }}">
                 <img alt="Currency Converter" class="icon" src="{{ url_for('static', filename='icons/exchange.png') }}">
                 <span class="menu-text">Currency Converter</span>
             </a>
+            <a class="list-group-item list-group-item-action bg-dark text-light" href="{{ url_for('manage_debts') }}">
+                <img alt="Debt Tracking" class="icon" src="{{ url_for('static', filename='icons/loan.png') }}">
+                <span class="menu-text">Debt Tracking</span>
+            </a>
+            {% endif %}
+
+            {% if current_user.subscription_plan == 'premium' %}
+            <!-- Premium Plan Features -->
+            <a class="list-group-item list-group-item-action bg-dark text-light" href="{{ url_for('chatbot') }}">
+                <img alt="AI Assistant" class="icon" src="{{ url_for('static', filename='icons/chatbot.png') }}">
+                <span class="menu-text">AI Assistant</span>
+            </a>
+            <!-- Add other premium features here -->
             {% endif %}
             {% if current_user.subscription_plan == 'Free' %}
             <a class="list-group-item list-group-item-action bg-dark text-light" href="{{ url_for('pricing') }}">
@@ -72,12 +87,12 @@
     }
 
     #wrapper {
-        height: 100vh;
         transition: all 0.5s ease;
+        display: flex; /* Ensure flex display */
     }
 
     #sidebar-wrapper {
-        min-height: calc(100vh - 56px);
+        min-height: calc(100vh - 56px); /* Ensure sidebar takes full height */
         width: 80px;
         position: fixed;
         left: 0;
@@ -130,8 +145,8 @@
     #page-content-wrapper {
         transition: margin-left 0.5s ease;
         padding: 20px;
-        width: 100%;
-        margin-left: 80px;
+        width: calc(100% - 80px); /* Adjust width to accommodate sidebar */
+        margin-left: 80px; /* Leave space for sidebar */
         background-color: #1F2833; /* Gunmetal */
         color: #C5C6C7; /* Platinum */
         animation: fadeInUp 0.5s ease;
