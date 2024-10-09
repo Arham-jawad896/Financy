@@ -19,8 +19,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))  # Get the current director
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "user.db")}'  # This will create user.db in the root directory
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
-stripe.api_key = 'sk_test_51Q69GpRvsBQNtu67JJKHWWIe3aev6O3KA76OHi8C6tfdPWiA3QBFnmfWZhxLowtOUJj0DVqpWxXLWf8YTK1HXkEr00KOyS1gK8'
-app.config['STRIPE_PUBLIC_KEY'] = 'pk_test_51Q69GpRvsBQNtu670asqWTEMyyigz4rnVPBftBBZcRpbWtn2qF5hfWsh3oveWg54H0Xa4HvopFXoXt2IX9xZuspM00dK7LzUw3'
+stripe.api_key = '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'
+app.config['STRIPE_PUBLIC_KEY'] = 'pk_live_51Q69GpRvsBQNtu67AcVg7TixjSokaRGFiDIU0DGOmRq1Y1sJtwkIPjQngN9pQV1h8bXzDbJy8WmBAHC6lnns96FX00kVUqJp1G'
 YOUR_DOMAIN = 'https://arhamjawad.pythonanywhere.com/'
 API_KEY = 'e4b6b5fa33b50de0fbfb98d8'
 FINNHUB_API_KEY = "cs2isnhr01qk1hurlve0cs2isnhr01qk1hurlveg"
