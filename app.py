@@ -1,4 +1,5 @@
 import logging
+
 import requests
 from flask import Flask, request, render_template, url_for, redirect, session, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -9,7 +10,7 @@ import os
 import stripe
 import http.client
 import json
-from groq import Groq
+
 
 app = Flask(__name__)
 app.secret_key = "arham"
@@ -18,13 +19,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))  # Get the current director
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "user.db")}'  # This will create user.db in the root directory
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
-stripe.api_key = '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'
-app.config['STRIPE_PUBLIC_KEY'] = 'pk_live_51Q69GpRvsBQNtu67AcVg7TixjSokaRGFiDIU0DGOmRq1Y1sJtwkIPjQngN9pQV1h8bXzDbJy8WmBAHC6lnns96FX00kVUqJp1G'
-YOUR_DOMAIN = 'http://127.0.0.1:5000/'
+stripe.api_key = 'sk_test_51Q69GpRvsBQNtu67JJKHWWIe3aev6O3KA76OHi8C6tfdPWiA3QBFnmfWZhxLowtOUJj0DVqpWxXLWf8YTK1HXkEr00KOyS1gK8'
+app.config['STRIPE_PUBLIC_KEY'] = 'pk_test_51Q69GpRvsBQNtu670asqWTEMyyigz4rnVPBftBBZcRpbWtn2qF5hfWsh3oveWg54H0Xa4HvopFXoXt2IX9xZuspM00dK7LzUw3'
+YOUR_DOMAIN = 'https://arhamjawad.pythonanywhere.com/'
 API_KEY = 'e4b6b5fa33b50de0fbfb98d8'
 FINNHUB_API_KEY = "cs2isnhr01qk1hurlve0cs2isnhr01qk1hurlveg"
 BASE_URL = 'https://api.exchangerate-api.com/v4/latest/'
-client = Groq(api_key='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')
 
 bcrypt = Bcrypt(app)
 login_manager = LoginManager()
@@ -199,9 +199,9 @@ def dashboard():
     subscription_plan = current_user.subscription_plan  # Assuming 'subscription_plan' is a field in your User model
 
     if subscription_plan == 'plus':
-        return redirect(url_for('overview'))  # Redirect to Plus page
+        return redirect(url_for('plus_page'))  # Redirect to Plus page
     elif subscription_plan == 'premium':
-        return redirect(url_for('overview'))  # Redirect to Premium page
+        return redirect(url_for('premium_page'))  # Redirect to Premium page
 
     return render_template('overview.html',
                            information_filled=information_filled)  # Render the overview for free plan users
@@ -696,31 +696,6 @@ def delete_paid_debt(debt_id):
     else:
         flash('Paid debt not found or cannot be deleted!', 'danger')
     return redirect(url_for('manage_debts'))  # Redirect to the debts page
-
-@app.route('/chatbot', methods=['GET', 'POST'])
-def chatbot():
-    if request.method == 'POST':
-        user_input = request.json.get('message')
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {
-                    "role": "user",
-                    "content": user_input,
-                }
-            ],
-            model="llama-3.1-70b-versatile",
-        )
-
-        # Extract the bot's response
-        bot_response = chat_completion.choices[0].message.content
-
-        # Handle tool call separately
-        if bot_response.startswith("<tool_call>"):
-            return jsonify({"response": "I'm analyzing your sentiment."})
-
-        return jsonify({"response": bot_response})
-
-    return render_template('plus/chatbot.html')
 
 if __name__ == '__main__':
     with app.app_context():

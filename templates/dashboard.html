@@ -34,14 +34,12 @@
                 <img alt="Feedback" class="icon" src="{{ url_for('static', filename='icons/report.png') }}">
                 <span class="menu-text">Feedback</span>
             </a>
-            {% if current_user.subscription_plan in ['plus', 'premium'] %}
-            <!-- Plus Plan Features -->
+            {% if current_user.subscription_plan in ['plus'] %}
             <a class="list-group-item list-group-item-action bg-dark text-light" href="{{ url_for('transactions') }}">
                 <img alt="Transactions" class="icon" src="{{ url_for('static', filename='icons/transaction.png') }}">
                 <span class="menu-text">Transactions</span>
             </a>
-            <a class="list-group-item list-group-item-action bg-dark text-light"
-               href="{{ url_for('currency_converter') }}">
+            <a class="list-group-item list-group-item-action bg-dark text-light" href="{{ url_for('currency_converter') }}">
                 <img alt="Currency Converter" class="icon" src="{{ url_for('static', filename='icons/exchange.png') }}">
                 <span class="menu-text">Currency Converter</span>
             </a>
@@ -49,15 +47,10 @@
                 <img alt="Debt Tracking" class="icon" src="{{ url_for('static', filename='icons/loan.png') }}">
                 <span class="menu-text">Debt Tracking</span>
             </a>
-            {% endif %}
-
-            {% if current_user.subscription_plan == 'premium' %}
-            <!-- Premium Plan Features -->
-            <a class="list-group-item list-group-item-action bg-dark text-light" href="{{ url_for('chatbot') }}">
-                <img alt="AI Assistant" class="icon" src="{{ url_for('static', filename='icons/chatbot.png') }}">
-                <span class="menu-text">AI Assistant</span>
+             <a class="list-group-item list-group-item-action bg-dark text-light" href="{{ url_for('market_data') }}">
+                <img alt="Debt Tracking" class="icon" src="{{ url_for('static', filename='icons/loan.png') }}">
+                <span class="menu-text">Debt Tracking</span>
             </a>
-            <!-- Add other premium features here -->
             {% endif %}
             {% if current_user.subscription_plan == 'Free' %}
             <a class="list-group-item list-group-item-action bg-dark text-light" href="{{ url_for('pricing') }}">
