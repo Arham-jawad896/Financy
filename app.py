@@ -15,16 +15,16 @@ app = Flask(__name__)
 app.secret_key = "arham"
 
 basedir = os.path.abspath(os.path.dirname(__file__))  # Get the current directory of the script
-app.config['SQLALCHEMY_DATABASE_URI'] = 'Hello'  # This will create user.db in the root directory
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = 'Hello'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # Keep this as is, since it's a timedelta
-stripe.api_key = 'Hello'
-app.config['STRIPE_PUBLIC_KEY'] = 'Hello'
-YOUR_DOMAIN = 'Hello'
-API_KEY = 'Hello'
-FINNHUB_API_KEY = 'Hello'
-BASE_URL = 'Hello'
-client = Groq(api_key='Hello')
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "user.db")}'  # This will create user.db in the root directory
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
+stripe.api_key = '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'
+app.config['STRIPE_PUBLIC_KEY'] = 'pk_live_51Q69GpRvsBQNtu67AcVg7TixjSokaRGFiDIU0DGOmRq1Y1sJtwkIPjQngN9pQV1h8bXzDbJy8WmBAHC6lnns96FX00kVUqJp1G'
+YOUR_DOMAIN = 'http://127.0.0.1:5000/'
+API_KEY = 'e4b6b5fa33b50de0fbfb98d8'
+FINNHUB_API_KEY = "cs2isnhr01qk1hurlve0cs2isnhr01qk1hurlveg"
+BASE_URL = 'https://api.exchangerate-api.com/v4/latest/'
+client = Groq(api_key='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')
 
 bcrypt = Bcrypt(app)
 login_manager = LoginManager()
